@@ -2,24 +2,25 @@ package udp
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"time"
 )
 
 // udp client
-func udpClient(address string) (err error) {
+func udpClient(address string) (final_time int) {
 	// gets the ip and port in the format: ip:port.
 	ipPort, err := net.ResolveUDPAddr("udp", address)
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatalln(err)
+		return -1
 	}
 
 	// connecting to server
 	connection, err := net.DialUDP("udp", nil, ipPort)
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatalln(err)
+		return -1
 	}
 
 	fmt.Println("connected to server: %s", connection.RemoteAddr().String())
@@ -34,7 +35,7 @@ func udpClient(address string) (err error) {
 	_, err = connection.Write(message)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalln(err)
 	}
 	go func() {
 		// time.Now().Add uses nanoseconds
@@ -44,14 +45,14 @@ func udpClient(address string) (err error) {
 		buffer := make([]byte, 1024)
 		n, _, err := connection.ReadFromUDP(buffer)
 		if err != nil {
-			fmt.Println(err)
+			log.Fatalln(err)
 			return
 		}
 		fmt.Println("Received from UDP server : ", string(buffer[:n]))
 	}()
 	// finding the rtt
-	endTime := time.Now()
-	fmt.Printf("The RTT took: %v.\n", endTime.Sub(initialTime))
+	endTime := int(time.Now().Sub(initialTime))
+	fmt.Printf("The RTT took: %d.\n", endTime)
 
-	return
+	return endTime
 }
