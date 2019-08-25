@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strconv"
 )
 
 func handleUDPConnection(conn *net.UDPConn) {
@@ -21,10 +22,6 @@ func handleUDPConnection(conn *net.UDPConn) {
 		log.Fatal(err)
 	}
 
-	// NOTE : Need to specify client address in WriteToUDP() function
-	//        otherwise, you will get this error message
-	//        write udp : write: destination address required if you use Write() function instead of WriteToUDP()
-
 	// write message back to client
 	message := []byte("Hello UDP client!")
 	_, err = conn.WriteToUDP(message, addr)
@@ -38,13 +35,15 @@ func handleUDPConnection(conn *net.UDPConn) {
 func main() {
 	hostName := "localhost"
 	// 5 clients allowed at the same time
-	portNums := []string{"8080", "8081", "8082", "8083", "8084"}
+	numberOfClients := 5
+	portNums := make([]string, numberOfClients)
 	services := make([]string, len(portNums))
 	udpAddresses := make([]*net.UDPAddr, len(portNums))
 	listeners := make([]*net.UDPConn, len(portNums))
 
 	// filling the arrays
 	for i, _ := range portNums {
+		portNums[i] = strconv.Itoa(8080 + i)
 		services[i] = hostName + ":" + portNums[i]
 
 		// resolving the address
@@ -69,7 +68,7 @@ func main() {
 	for {
 		for _, listener := range listeners {
 			// wait for UDP client to connect
-			handleUDPConnection(listener)
+			go handleUDPConnection(listener)
 		}
 	}
 

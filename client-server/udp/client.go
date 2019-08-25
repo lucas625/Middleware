@@ -45,7 +45,7 @@ func udpClient(address string) (final_time int) {
 		buffer := make([]byte, 1024)
 		n, _, err := connection.ReadFromUDP(buffer)
 		if err != nil {
-			log.Fatalln(err)
+			log.Println(err)
 			return
 		}
 		fmt.Println("Received from UDP server : ", string(buffer[:n]))
