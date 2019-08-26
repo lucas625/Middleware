@@ -1,14 +1,17 @@
-package client
+package main
 
 import (
 	"fmt"
 	"log"
 	"net"
 	"time"
+	"strconv"
+	"sync"
 )
 
 // udp client
-func udpClient(address string) (final_time int) {
+func UdpClient(address string, wg *sync.WaitGroup) (final_time int) {
+	defer wg.Done()
 	// gets the ip and port in the format: ip:port.
 	ipPort, err := net.ResolveUDPAddr("udp", address)
 	if err != nil {
@@ -23,7 +26,7 @@ func udpClient(address string) (final_time int) {
 		return -1
 	}
 
-	fmt.Println("connected to server: %s", connection.RemoteAddr().String())
+	fmt.Printf("connected to server: %s.\n", connection.RemoteAddr().String())
 
 	// closes the connection once the function ends
 	defer connection.Close()
@@ -52,7 +55,24 @@ func udpClient(address string) (final_time int) {
 	}()
 	// finding the rtt
 	endTime := int(time.Now().Sub(initialTime))
-	fmt.Printf("The RTT took: %d.\n", endTime)
+	fmt.Printf("The RTT took: %0.4fms.\n", float32(endTime)/1000000)
 
 	return endTime
+}
+
+func main() {
+	server := "localhost"
+	numberOfClients := 5
+	services := make([]string, numberOfClients)
+
+	var wg sync.WaitGroup
+
+	for i := 0; i < numberOfClients; i++ {
+		services[i] = server + ":" + strconv.Itoa(8080+i)
+		wg.Add(1)
+		go UdpClient(services[i], &wg)
+	}
+
+	wg.Wait()
+
 }
