@@ -5,10 +5,11 @@ import (
 	"log"
 	"net"
 	"strconv"
+	"sync"
 )
 
 func handleUDPConnection(conn *net.UDPConn) {
-
+	fmt.Println("on conn")
 	// here is where you want to do stuff like read or write to client
 
 	buffer := make([]byte, 1024)
@@ -29,7 +30,15 @@ func handleUDPConnection(conn *net.UDPConn) {
 	if err != nil {
 		log.Println(err)
 	}
+	// while true
+	handleUDPConnection(conn)
 
+}
+
+func waitHandleConn(conn *net.UDPConn, wg *sync.WaitGroup) {
+	defer wg.Done()// tells one of the goroutines ended after this func ends.
+	fmt.Println("oi")
+	handleUDPConnection(conn)
 }
 
 func main() {
@@ -64,16 +73,21 @@ func main() {
 
 	}
 
-	// while true
-	for {
-		for _, listener := range listeners {
-			// wait for UDP client to connect
-			go handleUDPConnection(listener)
-		}
+	// sync
+	var wg sync.WaitGroup
+
+	for _, listener := range listeners {
+		wg.Add(1)// tells the wait group to wait for one more goroutine
+		go waitHandleConn(listener, &wg)
 	}
+
+	// waiting for all goroutines
+	wg.Wait()
 
 	for _, listener := range listeners {
 		listener.Close()
 	}
+
+	fmt.Println("Server terminated!")
 
 }
