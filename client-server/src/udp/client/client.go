@@ -33,7 +33,7 @@ func UdpClient(address string, wg *sync.WaitGroup) (final_time int) {
 
 	initialTime := time.Now()
 	// write a message to server
-	message := []byte("Hello UDP server!")
+	message := []byte(strconv.Itoa(13))
 
 	_, err = connection.Write(message)
 

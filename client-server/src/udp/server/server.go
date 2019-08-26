@@ -14,16 +14,18 @@ func handleUDPConnection(conn *net.UDPConn) {
 	buffer := make([]byte, 1024)
 
 	n, addr, err := conn.ReadFromUDP(buffer)
-
-	fmt.Println("UDP client : ", addr)
-	fmt.Println("Received from UDP client :  ", string(buffer[:n]))
-
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
+	val, err := strconv.Atoi(string(buffer[:n]))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println("UDP client : ", addr)
+	fmt.Printf("Received from UDP client : %d.\n", val)
 
 	// write message back to client
-	message := []byte("Hello UDP client!")
+	message := []byte(strconv.FormatBool(val%2 == 0))
 	_, err = conn.WriteToUDP(message, addr)
 
 	if err != nil {
@@ -64,7 +66,7 @@ func main() {
 		// listener for UDP connection
 		listener, err := net.ListenUDP("udp", udpAddresses[i])
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalln(err)
 		}
 		listeners[i] = listener
 
