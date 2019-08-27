@@ -5,7 +5,6 @@ import (
 	"log"
 	"net"
 	"strconv"
-	"strings"
 	"sync"
 )
 
@@ -24,11 +23,11 @@ func handleUDPConnection(conn *net.UDPConn) {
 		log.Print(err)
 	}
 	// setting buffers
-	err = conn.SetWriteBuffer(64 * 1024 * 10000)
+	err = conn.SetWriteBuffer(64 * 1024 * 100000)
 	if err != nil {
 		log.Print(err)
 	}
-	err = conn.SetReadBuffer(64 * 1024 * 10000)
+	err = conn.SetReadBuffer(64 * 1024 * 100000)
 	if err != nil {
 		log.Print(err)
 	}
@@ -38,15 +37,13 @@ func handleUDPConnection(conn *net.UDPConn) {
 		log.Fatalln(err)
 	}
 
-	aux := strings.Split(string(buffer[:n]), " ")
-	val, err := strconv.Atoi(aux[0])
-	auxT := aux[1]
+	val, err := strconv.Atoi(string(buffer[:n]))
 
 	fmt.Println("UDP client : ", addr)
 	fmt.Printf("Received from UDP client : %d.\n", val)
 
 	// write message back to client
-	message := []byte(strconv.FormatBool((val%2 == 0)) + " " + strconv.Itoa(val) + " " + auxT)
+	message := []byte(strconv.FormatBool((val%2 == 0)) + " " + strconv.Itoa(val))
 	_, err = conn.WriteToUDP(message, addr)
 
 	if err != nil {

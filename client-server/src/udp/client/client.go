@@ -84,8 +84,9 @@ func UdpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *Calc
 	for i := 0; i < numberOfCalls; i++ {
 
 		initialTime := time.Now()
+
 		// write a message to server
-		message := []byte(strconv.Itoa(i) + " " + strconv.Itoa(initialTime.Nanosecond())) //sending time to get the right rtt
+		message := []byte(strconv.Itoa(i)) //sending time to get the right rtt
 
 		_, err = connection.Write(message)
 
@@ -95,8 +96,11 @@ func UdpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *Calc
 		wgCalls.Add(1)
 		go func() {
 			defer wgCalls.Done()
+
+			auxT := &initialTime
+
 			// time.Now().Add uses nanoseconds
-			deadline := time.Now().Add(100000000000) // 100s
+			deadline := time.Now().Add(35000000000) // 35s
 			err = connection.SetReadDeadline(deadline)
 			// receive message from server
 			buffer := make([]byte, 4096)
@@ -107,17 +111,15 @@ func UdpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *Calc
 				val := aux[1]
 				// finding the rtt
 				if count { // the question only asks for only client to be calculated
-					nano, err := strconv.Atoi(aux[2])
-					if err != nil {
-						log.Println(err)
-						return
+					// endTime := float64(time.Duration.Nanoseconds(time.Now().Sub(*auxT))) / 1000000
+					endTime := float64(time.Now().Nanosecond()-auxT.Nanosecond()) / 1000000
+					if endTime > 0 {
+						addTime(calc, endTime)
+						fmt.Printf("The RTT took: %0.2fms.\n", endTime)
 					}
-					endTime := float64((time.Now().Nanosecond() - nano) / 1000000)
-					addTime(calc, endTime)
-					fmt.Printf("The RTT took: %0.2fms.\n", endTime)
 				}
 
-				fmt.Printf("Received from UDP server: %s is an even number = %s: \n", val, bol)
+				fmt.Printf("Received from UDP server: %s is an even number = %s.\n", val, bol)
 			}
 
 			buffer = nil
@@ -130,7 +132,7 @@ func UdpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *Calc
 
 func main() {
 	server := "localhost"
-	numberOfClients := 5
+	numberOfClients := 1
 	services := make([]string, numberOfClients)
 
 	numberOfCalls := 10000
@@ -144,8 +146,9 @@ func main() {
 		// only the first client will count
 		if i == 0 {
 			go UdpClient(services[i], &wg, numberOfCalls, &tCalc, true)
+		} else {
+			go UdpClient(services[i], &wg, numberOfCalls, &tCalc, false)
 		}
-		go UdpClient(services[i], &wg, numberOfCalls, &tCalc, false)
 	}
 
 	wg.Wait()
