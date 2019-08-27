@@ -43,23 +43,30 @@ func addTime(calc *CalcTimes, value float64) {
 // udp client
 func UdpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *CalcTimes, count bool) {
 	defer wg.Done()
+	// gets the ip and port in the format: ip:port.
+	ipPort, err := net.ResolveUDPAddr("udp", address)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// connecting to server
+	connection, err := net.DialUDP("udp", nil, ipPort)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	fmt.Printf("connected to server: %s.\n", connection.RemoteAddr().String())
+
+	// setting buffer size
+	err = connection.SetWriteBuffer(64 * 1024 * 1024)
+	if err != nil {
+		log.Print(err)
+	}
+	// closes the connection once the function ends
+	defer connection.Close()
+
+	var wgCalls sync.WaitGroup
+
 	for i := 0; i < numberOfCalls; i++ {
-		// gets the ip and port in the format: ip:port.
-		ipPort, err := net.ResolveUDPAddr("udp", address)
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		// connecting to server
-		connection, err := net.DialUDP("udp", nil, ipPort)
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		fmt.Printf("connected to server: %s.\n", connection.RemoteAddr().String())
-
-		// closes the connection once the function ends
-		defer connection.Close()
 
 		initialTime := time.Now()
 		// write a message to server
@@ -70,16 +77,17 @@ func UdpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *Calc
 		if err != nil {
 			log.Fatalln(err)
 		}
+		wgCalls.Add(1)
 		go func() {
+			defer wgCalls.Done()
 			// time.Now().Add uses nanoseconds
-			deadline := time.Now().Add(2 * 10000000000)
+			deadline := time.Now().Add(100000000000)
 			err = connection.SetReadDeadline(deadline)
 			// receive message from server
 			buffer := make([]byte, 4096)
 			n, _, err := connection.ReadFromUDP(buffer)
 			if err != nil {
-				log.Println(err)
-				return
+				log.Fatalln(err)
 			}
 			fmt.Println("Received from UDP server : ", string(buffer[:n]))
 			buffer = nil
@@ -91,6 +99,7 @@ func UdpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *Calc
 			fmt.Printf("The RTT took: %0.4fms.\n", endTime)
 		}
 	}
+	wgCalls.Wait()
 }
 
 func main() {
@@ -98,7 +107,7 @@ func main() {
 	numberOfClients := 5
 	services := make([]string, numberOfClients)
 
-	numberOfCalls := 2000
+	numberOfCalls := 10000
 
 	tCalc := CalcTimes{Used: 0, Values: make([]float64, numberOfCalls*numberOfClients)}
 	var wg sync.WaitGroup
@@ -118,4 +127,5 @@ func main() {
 	standardDev := standardDeviation(&tCalc, average)
 	fmt.Printf("The Average RTT was: %0.4fms.\n", average)
 	fmt.Printf("The StandardDeviation on the RTT was: %0.4fms.\n", standardDev)
+	fmt.Println("Successful operations: ", tCalc.Used)
 }
