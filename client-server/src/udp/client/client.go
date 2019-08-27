@@ -6,6 +6,7 @@ import (
 	"math"
 	"net"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -56,8 +57,22 @@ func UdpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *Calc
 
 	fmt.Printf("connected to server: %s.\n", connection.RemoteAddr().String())
 
-	// setting buffer size
-	err = connection.SetWriteBuffer(64 * 1024 * 1024)
+	// cleaning buffers
+	err = connection.SetWriteBuffer(0)
+	if err != nil {
+		log.Print(err)
+	}
+	err = connection.SetReadBuffer(0)
+	if err != nil {
+		log.Print(err)
+	}
+
+	// setting buffers
+	err = connection.SetWriteBuffer(64 * 1024 * numberOfCalls)
+	if err != nil {
+		log.Print(err)
+	}
+	err = connection.SetReadBuffer(64 * 1024 * numberOfCalls)
 	if err != nil {
 		log.Print(err)
 	}
@@ -70,7 +85,7 @@ func UdpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *Calc
 
 		initialTime := time.Now()
 		// write a message to server
-		message := []byte(strconv.Itoa(i))
+		message := []byte(strconv.Itoa(i) + " " + strconv.Itoa(initialTime.Nanosecond())) //sending time to get the right rtt
 
 		_, err = connection.Write(message)
 
@@ -81,23 +96,34 @@ func UdpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *Calc
 		go func() {
 			defer wgCalls.Done()
 			// time.Now().Add uses nanoseconds
-			deadline := time.Now().Add(100000000000)
+			deadline := time.Now().Add(100000000000) // 100s
 			err = connection.SetReadDeadline(deadline)
 			// receive message from server
 			buffer := make([]byte, 4096)
 			n, _, err := connection.ReadFromUDP(buffer)
-			if err != nil {
-				log.Fatalln(err)
+			if err == nil {
+				aux := strings.Split(string(buffer[:n]), " ")
+				bol := aux[0]
+				val := aux[1]
+				// finding the rtt
+				if count { // the question only asks for only client to be calculated
+					nano, err := strconv.Atoi(aux[2])
+					if err != nil {
+						log.Println(err)
+						return
+					}
+					endTime := float64((time.Now().Nanosecond() - nano) / 1000000)
+					addTime(calc, endTime)
+					fmt.Printf("The RTT took: %0.2fms.\n", endTime)
+				}
+
+				fmt.Printf("Received from UDP server: %s is an even number = %s: \n", val, bol)
 			}
-			fmt.Println("Received from UDP server : ", string(buffer[:n]))
+
 			buffer = nil
+
 		}()
-		// finding the rtt
-		if count { // the question only asks for only client to be calculated
-			endTime := float64(time.Now().Sub(initialTime) / 1000000)
-			addTime(calc, endTime)
-			fmt.Printf("The RTT took: %0.4fms.\n", endTime)
-		}
+
 	}
 	wgCalls.Wait()
 }
@@ -126,6 +152,6 @@ func main() {
 	average := calcAverage(&tCalc)
 	standardDev := standardDeviation(&tCalc, average)
 	fmt.Printf("The Average RTT was: %0.4fms.\n", average)
-	fmt.Printf("The StandardDeviation on the RTT was: %0.4fms.\n", standardDev)
+	fmt.Printf("The Standard Deviation on the RTT was: %0.4fms.\n", standardDev)
 	fmt.Println("Successful operations: ", tCalc.Used)
 }
