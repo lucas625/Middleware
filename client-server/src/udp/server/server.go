@@ -11,7 +11,7 @@ import (
 func handleUDPConnection(conn *net.UDPConn) {
 	// here is where you want to do stuff like read or write to client
 
-	buffer := make([]byte, 1024)
+	buffer := make([]byte, 4096)
 
 	n, addr, err := conn.ReadFromUDP(buffer)
 	if err != nil {
@@ -32,12 +32,13 @@ func handleUDPConnection(conn *net.UDPConn) {
 		log.Println(err)
 	}
 	// while true
+	buffer = nil
 	handleUDPConnection(conn)
 
 }
 
 func waitHandleConn(conn *net.UDPConn, wg *sync.WaitGroup) {
-	defer wg.Done()// tells one of the goroutines ended after this func ends.
+	defer wg.Done() // tells one of the goroutines ended after this func ends.
 	defer conn.Close()
 	handleUDPConnection(conn)
 }
@@ -78,7 +79,7 @@ func main() {
 	var wg sync.WaitGroup
 
 	for _, listener := range listeners {
-		wg.Add(1)// tells the wait group to wait for one more goroutine
+		wg.Add(1) // tells the wait group to wait for one more goroutine
 		go waitHandleConn(listener, &wg)
 	}
 
