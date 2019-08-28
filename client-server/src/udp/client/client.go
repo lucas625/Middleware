@@ -83,11 +83,9 @@ func UdpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *Calc
 
 	for i := 0; i < numberOfCalls; i++ {
 
-		initialTime := time.Now()
-
 		// write a message to server
 		message := []byte(strconv.Itoa(i)) //sending time to get the right rtt
-
+		initialTime := time.Now()
 		_, err = connection.Write(message)
 
 		if err != nil {
@@ -96,9 +94,6 @@ func UdpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *Calc
 		wgCalls.Add(1)
 		go func() {
 			defer wgCalls.Done()
-
-			auxT := &initialTime
-
 			// time.Now().Add uses nanoseconds
 			deadline := time.Now().Add(35000000000) // 35s
 			err = connection.SetReadDeadline(deadline)
@@ -106,14 +101,14 @@ func UdpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *Calc
 			buffer := make([]byte, 4096)
 			n, _, err := connection.ReadFromUDP(buffer)
 			if err == nil {
+				endTime := float64(time.Now().Nanosecond()-initialTime.Nanosecond()) / 1000000
 				aux := strings.Split(string(buffer[:n]), " ")
 				bol := aux[0]
 				val := aux[1]
 				// finding the rtt
-				if count { // the question only asks for only client to be calculated
-					// endTime := float64(time.Duration.Nanoseconds(time.Now().Sub(*auxT))) / 1000000
-					endTime := float64(time.Now().Nanosecond()-auxT.Nanosecond()) / 1000000
-					if endTime > 0 {
+				if count { // the question only asks for one client to be calculated
+
+					if endTime >= 0 {
 						addTime(calc, endTime)
 						fmt.Printf("The RTT took: %0.2fms.\n", endTime)
 					}

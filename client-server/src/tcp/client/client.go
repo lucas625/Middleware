@@ -77,7 +77,7 @@ func TcpClient(address string, wg *sync.WaitGroup, numberOfCalls int, calc *Calc
 		fmt.Printf("Received from TCP server: %s is an even number = %s.\n", val, bol)
 		if count { // the question only asks for one client to be calculated
 			endTime := float64(time.Now().Nanosecond()-initialTime.Nanosecond()) / 1000000
-			if endTime > 0 {
+			if endTime >= 0 {
 				addTime(calc, endTime)
 				fmt.Printf("The RTT took: %0.2fms.\n", endTime)
 			}
