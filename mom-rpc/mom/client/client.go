@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/lucas625/Middleware/mom-rpc/utils"
@@ -8,7 +9,9 @@ import (
 )
 
 func main() {
-	// Connecting to rabbitmq server
+	numberOfCalls := 100
+
+	// conecting to mom server
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	utils.PrintError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
@@ -39,16 +42,40 @@ func main() {
 	)
 	utils.PrintError(err, "Failed to declare a queue.")
 
-	// Preparing to read messages from client
-	msgfromClient, err := ch.Consume(
-		requestQueue.Name, // queue
-		"",                // consumer
-		true,              // autoAck
-		false,             // exclusive
-		false,             // noLocal
-		false,             // noWait
-		nil,               // args
+	// Preparing to read messages from server
+	msgFromServer, err := ch.Consume(
+		replyQueue.Name, // queue
+		"",              // consumer
+		true,            // autoAck
+		false,           // exclusive
+		false,           // noLocal
+		false,           // noWait
+		nil,             // args
 	)
 	utils.PrintError(err, "Failed to consume from client.")
-	fmt.Println(msgfromClient, replyQueue)
+	fmt.Println("Client on!")
+
+	// Running
+	for i := 0; i < numberOfCalls; i++ {
+		// Publishing request
+		requestMsg := utils.Message{Client: 0, Value: i}
+		requestMsgBytes, err := json.Marshal(requestMsg)
+		utils.PrintError(err, "Failed to convert to json.")
+
+		err = ch.Publish(
+			"",                // exchange
+			requestQueue.Name, // routing key
+			false,             // mandatory
+			false,             // immediate
+			amqp.Publishing{
+				ContentType: "text/plain",
+				Body:        []byte(requestMsgBytes),
+			},
+		)
+		utils.PrintError(err, "Failed to publish message.")
+
+		<-msgFromServer
+
+	}
+
 }
