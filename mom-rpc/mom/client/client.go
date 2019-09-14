@@ -54,7 +54,6 @@ func main() {
 	)
 	utils.PrintError(err, "Failed to consume from client.")
 	fmt.Println("Client on!")
-
 	// Running
 	for i := 0; i < numberOfCalls; i++ {
 		// Publishing request
@@ -74,8 +73,12 @@ func main() {
 		)
 		utils.PrintError(err, "Failed to publish message.")
 
-		<-msgFromServer
+		msg := <-msgFromServer
 
+		var msgResponse utils.Message
+		err = json.Unmarshal(msg.Body, &msgResponse)
+		utils.PrintError(err, "Failed to parse json.")
+
+		fmt.Println(msgResponse)
 	}
-
 }
