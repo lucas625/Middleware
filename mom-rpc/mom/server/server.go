@@ -65,7 +65,8 @@ func main() {
 
 		// replying
 		var replyMsg utils.Message
-		replyMsg.Text = utils.DecodeMessage(&msgRequest)
+		replyMsg.Client = msgRequest.Client
+		replyMsg.Value = utils.DecodeMessage(&msgRequest)
 		replyMsgBytes, err := json.Marshal(replyMsg)
 		utils.PrintError(err, "Failed to convert to json.")
 
