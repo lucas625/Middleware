@@ -3,13 +3,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
-	"github.com/lucas625/Middleware/mom-rpc/utils"
+	"github.com/lucas625/Middleware/utils"
 	"github.com/streadway/amqp"
 )
 
 func main() {
-	numberOfCalls := 100
+	numberOfCalls := 10000 // the number of server calls
+
+	calc := utils.InitCalcValues(make([]float64, numberOfCalls, numberOfCalls)) // object to store the rtts
 
 	// conecting to mom server
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
@@ -71,14 +74,27 @@ func main() {
 				Body:        []byte(requestMsgBytes),
 			},
 		)
+		initialTime := time.Now() //calculating time
 		utils.PrintError(err, "Failed to publish message.")
 
-		msg := <-msgFromServer
+		msg := <-msgFromServer // receiving the response
 
+		endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
+		utils.AddValue(&calc, endTime)                                 // pushing to the stored values
+
+		// getting the response
 		var msgResponse utils.Message
 		err = json.Unmarshal(msg.Body, &msgResponse)
 		utils.PrintError(err, "Failed to parse json.")
-
 		fmt.Println(msgResponse)
+
+		time.Sleep(25 * time.Millisecond) // used to evaluate
+
 	}
+
+	// evaluating
+	avrg := utils.CalcAverage(&calc)
+	stdv := utils.CalcStandardDeviation(&calc, avrg)
+
+	utils.PrintEvaluation(avrg, stdv)
 }

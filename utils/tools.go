@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"log"
 	"math"
 )
@@ -88,6 +89,20 @@ func AddValue(calc *CalcValues, value float64) {
 //  a CalcValues object.
 //
 func InitCalcValues(values []float64) CalcValues {
-	calc := CalcValues{Used: len(values), Values: values}
+	calc := CalcValues{Used: 0, Values: values}
 	return calc
+}
+
+// PrintEvaluation is a function to print the average value and standard deviation.
+//
+// Parameters:
+//  avrg - the average value.
+//  stdv - the standard deviation.
+//
+// Returns:
+//  none
+//
+func PrintEvaluation(avrg float64, stdv float64) {
+	fmt.Printf("The Average RTT was: %0.4fms.\n", avrg)
+	fmt.Printf("The Standard Deviation on the RTT was: %0.4fms.\n", stdv)
 }
