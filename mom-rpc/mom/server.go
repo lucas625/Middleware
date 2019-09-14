@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/lucas625/Middleware/mom-rpc/utils"
 	"github.com/streadway/amqp"
 )
@@ -48,5 +50,5 @@ func main() {
 		nil,               // args
 	)
 	utils.PrintError(err, "Failed to consume from client.")
-
+	fmt.Println(msgfromClient, replyQueue)
 }
