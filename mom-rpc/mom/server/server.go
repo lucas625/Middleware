@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/lucas625/Middleware/mom-rpc/utils"
@@ -40,7 +41,7 @@ func main() {
 	utils.PrintError(err, "Failed to declare a queue.")
 
 	// Preparing to read messages from client
-	msgfromClient, err := ch.Consume(
+	msgFromClient, err := ch.Consume(
 		requestQueue.Name, // queue
 		"",                // consumer
 		true,              // autoAck
@@ -50,5 +51,36 @@ func main() {
 		nil,               // args
 	)
 	utils.PrintError(err, "Failed to consume from client.")
-	fmt.Println(msgfromClient, replyQueue)
+	fmt.Println("Server on!")
+
+	// server on
+	for d := range msgFromClient {
+		// receiving request
+		var msgRequest utils.Message
+		err := json.Unmarshal(d.Body, &msgRequest)
+		utils.PrintError(err, "Failed to parse json.")
+
+		// processing request
+		fmt.Println(msgRequest)
+
+		// replying
+		var replyMsg utils.Message
+		replyMsg.Text = utils.DecodeMessage(&msgRequest)
+		replyMsgBytes, err := json.Marshal(replyMsg)
+		utils.PrintError(err, "Failed to convert to json.")
+
+		err = ch.Publish(
+			"",              // exchange
+			replyQueue.Name, // routing key
+			false,           // mandatory
+			false,           // immediate
+			amqp.Publishing{
+				ContentType: "text/plain",
+				Body:        []byte(replyMsgBytes),
+			},
+		)
+		utils.PrintError(err, "Failed to publish message.")
+
+	}
+
 }
