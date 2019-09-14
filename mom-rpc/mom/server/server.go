@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/lucas625/Middleware/mom-rpc/utils"
+	"github.com/lucas625/Middleware/utils"
 	"github.com/streadway/amqp"
 )
 
