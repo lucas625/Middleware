@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"multiplicador/impl"
 	"net"
 	"net/http"
 	"net/rpc"
-	"shared"
 	"strconv"
+
+	"github.com/lucas625/Middleware/utils"
+	"github.com/lucas625/Midleware/mom-rpc/rpc/multiplicador/impl"
 )
 
 func main() {
@@ -24,7 +25,7 @@ func main() {
 
 	// create tcp listen
 	l, err := net.Listen("tcp", ":"+strconv.Itoa(8080))
-	shared.ChecaErro(err, "Servidor não inicializado")
+	utils.PrintError(err, "Servidor não inicializado")
 
 	// wait for calls
 	fmt.Println("Servidor pronto (RPC-HTTP) ...\n")
