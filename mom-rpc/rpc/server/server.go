@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"github.com/lucas625/Middleware/utils"
-	"github.com/lucas625/Midleware/mom-rpc/rpc/multiplicador/impl"
+	"github.com/lucas625/Middleware/mom-rpc/rpc/multiplicador/impl"
 )
 
 func main() {

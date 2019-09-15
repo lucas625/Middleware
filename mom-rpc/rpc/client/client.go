@@ -20,14 +20,11 @@ func main() {
 	utils.PrintError(err, "O Servidor não está pronto")
 
 	// make requests
-	//fmt.Println("Client started execution... ")
-	//start := time.Now()
 	for i := 0; i < numberOfCalls; i++ {
-		initialTime := time.Now()
-
 		// prepara request
 		args := i
 
+		initialTime := time.Now()
 		// envia request e recebe resposta
 		client.Call("Multiplicador.Mul", args, &reply)
 
@@ -36,7 +33,7 @@ func main() {
 
 		fmt.Printf("%v\n", *&reply)
 
-		//time.Sleep(25 * time.Millisecond)
+		time.Sleep(25 * time.Millisecond)
 	}
 	// evaluating
 	avrg := utils.CalcAverage(&calc)
