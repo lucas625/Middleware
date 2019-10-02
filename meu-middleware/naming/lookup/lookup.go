@@ -1,8 +1,9 @@
-package naming
+package lookup
 
 import (
-	"github.com/lucas625/Middleware/MeuMiddleware/clientproxy"
 	"fmt"
+
+	"github.com/lucas625/Middleware/meu-middleware/distribution/clientproxy"
 )
 
 // NamingService is a structure for holding all the names.
@@ -23,7 +24,7 @@ type NamingService struct {
 // Returns:
 //  a boolean checking if the name was added to the NamingService.
 //
-func (naming *NamingService) Bind(name string, proxy clientproxy.ClientProxy) (bool) {
+func (naming *NamingService) Bind(name string, proxy clientproxy.ClientProxy) bool {
 	_, present := naming.Repository[name]
 	if present {
 		return false
@@ -40,10 +41,11 @@ func (naming *NamingService) Bind(name string, proxy clientproxy.ClientProxy) (b
 // Returns:
 //  the ClientProxy.
 //
-func (naming *NamingService) Lookup(name string) (clientproxy.ClientProxy) {
+func (naming *NamingService) Lookup(name string) clientproxy.ClientProxy {
 	cp, present := naming.Repository[name]
 	if !present {
-		return nil
+		var nilClientProxy clientproxy.ClientProxy // cannot return nil for struct
+		return nilClientProxy
 	}
 	return cp
 }
