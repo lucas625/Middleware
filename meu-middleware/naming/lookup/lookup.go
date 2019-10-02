@@ -1,6 +1,7 @@
 package lookup
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/lucas625/Middleware/meu-middleware/distribution/clientproxy"
@@ -22,15 +23,15 @@ type NamingService struct {
 //  proxy - the ClientProxy to with the name key.
 //
 // Returns:
-//  a boolean checking if the name was added to the NamingService.
+//  an error if was unable to add the ClientProxy.
 //
-func (naming *NamingService) Bind(name string, proxy clientproxy.ClientProxy) bool {
+func (naming *NamingService) Bind(name string, proxy clientproxy.ClientProxy) error {
 	_, present := naming.Repository[name]
 	if present {
-		return false
+		return errors.New("Unable to bind " + name + ". This name is already on the naming service.")
 	}
 	naming.Repository[name] = proxy
-	return true
+	return nil
 }
 
 // Lookup is a function to get a ClientProxy from the repository.
@@ -40,14 +41,15 @@ func (naming *NamingService) Bind(name string, proxy clientproxy.ClientProxy) bo
 //
 // Returns:
 //  the ClientProxy.
+//  an error if was unable to find the name.
 //
-func (naming *NamingService) Lookup(name string) clientproxy.ClientProxy {
+func (naming *NamingService) Lookup(name string) (clientproxy.ClientProxy, error) {
 	cp, present := naming.Repository[name]
 	if !present {
 		var nilClientProxy clientproxy.ClientProxy // cannot return nil for struct
-		return nilClientProxy
+		return nilClientProxy, errors.New(name + " not found on the naming service.")
 	}
-	return cp
+	return cp, nil
 }
 
 // List is a function to print all names in the naming service.
