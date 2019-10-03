@@ -2,7 +2,6 @@ package lookup
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/lucas625/Middleware/meu-middleware/distribution/clientproxy"
 )
@@ -52,18 +51,14 @@ func (naming *NamingService) Lookup(name string) (clientproxy.ClientProxy, error
 	return cp, nil
 }
 
-// List is a function to print all names in the naming service.
+// List is a function to return all data in the naming service.
 //
 // Parameters:
 //  none
 //
 // Returns:
-//  none
+//  all data in the naming service.
 //
-func (naming *NamingService) List() {
-	nameList := ""
-	for key := range naming.Repository {
-		nameList += key + "\n"
-	}
-	fmt.Print(nameList)
+func (naming *NamingService) List() map[string]clientproxy.ClientProxy {
+	return naming.Repository
 }
