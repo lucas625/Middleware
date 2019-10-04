@@ -11,7 +11,7 @@ import {
 //  Port     - Stores the used port.
 //  ID       - Identifies the client.
 //  TypeName - Declares the type used.
-//
+
 type ClientProxy struct {
 	Host     string
 	Port     int
@@ -23,6 +23,9 @@ type ClientProxy struct {
 //
 // Parameters:
 // p1 - Number to get multiplied
+//
+// Returns:
+// The result obtained
 
 func (proxy ClientProxy) Mul (p1 int) int {
 
@@ -30,12 +33,11 @@ func (proxy ClientProxy) Mul (p1 int) int {
 	params := make([]interface{},1)
 	params[0] = p1
 	request := aux.Request{"Mul", params}
-	inv := aux.Invocation (proxy.ClientProxy.Host, proxy.ClientProxy.Port, request)
+	inv := aux.Invocation {Host:proxy.ClientProxy.Host, Port:proxy.ClientProxy.Port, Request:request}
 
 	// Invokes requestor
 	req := requestor.Requestor{}
 	ter := req.Invoke(inv).([]interface{})
 
-	// Returns the result obtained
 	return int(ter[0].(float64))
 }
