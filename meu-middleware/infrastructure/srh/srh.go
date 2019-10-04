@@ -7,6 +7,12 @@ import (
 	"encoding/binary"
 )
 
+// SRH is a structure for Server to Client setups.
+//
+// Members:
+//  ServerHost - server's host IP.
+//  ServerPort - server's host port.
+//
 type SRH struct {
 	ServerHost string
 	ServerPort int
@@ -16,6 +22,14 @@ var ln net.Listener
 var conn net.Conn
 var err error
 
+// Receive is a funcion that listens for messages
+//
+// Parameters:
+// none
+//
+// Returns:
+// Message received from client
+//
 func (srh SRH) Receive() []byte {
 
 	// create listener
@@ -48,6 +62,14 @@ func (srh SRH) Receive() []byte {
 	return msg
 }
 
+// Send is a funcion that sends a message to a client
+//
+// Parameters:
+// msgToClient - A byte package to be sent to a client
+//
+// Returns:
+// none
+//
 func (SRH) Send(msgToClient []byte) {
 
 	// send message's size

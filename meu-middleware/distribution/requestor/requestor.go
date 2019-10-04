@@ -7,8 +7,21 @@ import (
 	"github.com/lucas625/Middleware/utils"
 )
 
+// Requestor is a structure to enable Requestor funcions
+//
+// Members:
+//  none
+//
 type Requestor struct{}
 
+// Invoke is a funcion that receives a Invocation and returns a Interface based on the Invocation parameters
+//
+// Parameters:
+// inv - Received invocation
+//
+// Returns:
+// interface
+//
 func (Requestor) Invoke(inv aux.Invocation) interface{} {
 	marshallerInst := marshaller.Marshaller{}
 	crhInst := crh.CRH{ServerHost:inv.Host,ServerPort:inv.Port}

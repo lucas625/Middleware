@@ -12,7 +12,7 @@ import {
 //  Port     - Stores the used port.
 //  ID       - Identifies the client.
 //  TypeName - Declares the type used.
-
+//
 type ClientProxy struct {
 	Host     string
 	Port     int
@@ -28,7 +28,7 @@ type ClientProxy struct {
 //
 // Returns:
 // The result obtained
-
+//
 func (proxy ClientProxy) Mul (p1 int) int {
 
 	// Sets up the necessary structs for the requestor
