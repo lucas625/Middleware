@@ -7,11 +7,25 @@ import (
 	"encoding/binary"
 )
 
+// CRH is a structure for Client to Server setups.
+//
+// Members:
+//  ServerHost - server's host IP.
+//  ServerPort - server's host port.
+//
 type CRH struct {
 	ServerHost string
 	ServerPort int
 }
 
+// SendReceive is a funcion that receives a byte package and sends it to a server
+//
+// Parameters:
+// msgToServer - Package to be sent
+//
+// Returns:
+// Message received from server
+//
 func (crh CRH) SendReceive(msgToServer []byte) []byte {
 
 	// connect to server
