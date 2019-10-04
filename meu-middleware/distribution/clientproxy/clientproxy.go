@@ -1,5 +1,9 @@
 package clientproxy
 
+import {
+	"github.com/lucas625/Middleware/meu-middleware/distribution/requestor"
+	"github.com/lucas625/Middleware/utils"
+}
 // ClientProxy is a struct that holds the data need to contact the server
 //
 // Members:
@@ -13,4 +17,25 @@ type ClientProxy struct {
 	Port     int
 	ID       int
 	TypeName string
+}
+
+// Mul is a funcion that receives a number and returns its double
+//
+// Parameters:
+// p1 - Number to get multiplied
+
+func (proxy ClientProxy) Mul (p1 int) int {
+
+	// Sets up the necessary structs for the requestor
+	params := make([]interface{},1)
+	params[0] = p1
+	request := aux.Request{"Mul", params}
+	inv := aux.Invocation (proxy.ClientProxy.Host, proxy.ClientProxy.Port, request)
+
+	// Invokes requestor
+	req := requestor.Requestor{}
+	ter := req.Invoke(inv).([]interface{})
+
+	// Returns the result obtained
+	return int(ter[0].(float64))
 }
