@@ -16,10 +16,10 @@ type Marshaller struct{}
 // Marshall is a funcion that receives a MIOP packet and transforms it to a bytes package
 //
 // Parameters:
-// msg - Target packet
+//  msg - Target packet
 //
 // Returns:
-// packet transformed to bytes
+//  packet transformed to bytes
 //
 func (Marshaller) Marshall(msg miop.Packet) []byte {
 
@@ -34,10 +34,10 @@ func (Marshaller) Marshall(msg miop.Packet) []byte {
 // Unmarshall is a funcion that receives a MIOP packet and transforms it to a bytes package
 //
 // Parameters:
-// msg - Target bytes package
+//  msg - Target bytes package
 //
 // Returns:
-// MIOT packet from the bytes
+//  MIOT packet from the bytes
 //
 func (Marshaller) Unmarshall(msg []byte) miop.Packet {
 
