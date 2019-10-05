@@ -1,10 +1,10 @@
 package clientproxy
 
-import {
+import (
 	"github.com/lucas625/Middleware/meu-middleware/distribution/requestor"
 	"github.com/lucas625/Middleware/utils"
 	"github.com/lucas625/Middleware/meu-middleware/identification/reference"
-}
+)
 // ClientProxy is a struct that holds the data need to contact the server
 //
 // Members:
