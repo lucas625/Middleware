@@ -45,7 +45,22 @@ func (cPool *Pool) GetFromPool() interface{} {
 	return servHolder
 }
 
-// Initpool is a function to initialize a pool.
+// EndPool is a function to end a pool.
+//
+// Parameters:
+//  cPool - the pool.
+//
+// Returns:
+//  none
+//
+func EndPool(cPool *Pool) {
+	for i := 0; i < len(cPool.Servants); i++ {
+		cPool.Servants[i] = nil
+	}
+	cPool = nil
+}
+
+// InitPool is a function to initialize a pool.
 //
 // Parameters:
 //  servs - the servants of the pool.
@@ -53,7 +68,7 @@ func (cPool *Pool) GetFromPool() interface{} {
 // Returns:
 //  the pool.
 //
-func Initpool(servs []interface{}) *Pool {
+func InitPool(servs []interface{}) *Pool {
 	calcP := Pool{Servants: servs, CurrentIdx: 0}
 	return &calcP
 }

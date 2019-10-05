@@ -4,6 +4,7 @@ import (
 	"github.com/lucas625/Middleware/meu-middleware/distribution/marshaller"
 	"github.com/lucas625/Middleware/meu-middleware/infrastructure/srh"
 	"github.com/lucas625/Middleware/meu-middleware/distribution/miop"
+	"github.com/lucas625/Middleware/meu-middleware/distribution/lifecycle-management/pooling"
 	"github.com/lucas625/Middleware/multiplicador/impl"
 	"github.com/lucas625/Middleware/utils"
 )
@@ -21,7 +22,13 @@ func (MultiplicadorInvoker) Invoke (){
 	miopPacketReply := miop.Packet{}
 	replParams := make([]interface(),1)
 
-	multiplicadorImpl := impl.Multiplicador{}
+	// creating the pool
+	multiplicadorList = make([]interface{}, 11)
+	for i := 0; i < len(multiplicadorList); i++ {
+		multiplicadorList[i] = impl.Multiplicador{}
+	}
+	multPool := pooling.InitPool(multiplicadorList)
+	defer pooling.EndPool(multPool)
 
 	for {
 		// Receive data
@@ -33,7 +40,7 @@ func (MultiplicadorInvoker) Invoke (){
 		
 		// setup request
 		_p1 := int(miopPacketRequest.Bd.ReqBody.Body[0].(float64))
-		replParams[0] = multiplicadorImpl.Mul(_p1)
+		replParams[0] = multPool.GetFromPool().Mul(_p1)
 
 		// assembly packet
 		repHeader := miop.ReplyHeader{Context:"", RequestID: miopPacketRequest.Bd.ReqHeader.RequestID, Status:1}
