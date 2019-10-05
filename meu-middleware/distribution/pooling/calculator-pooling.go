@@ -7,7 +7,7 @@ import (
 // Pool is a struct to work with many Servants.
 //
 // Members:
-//  Servants - list of Calculator objects.
+//  Servants - list of Servant objects.
 //  CurrentSize - total number of used Servants.
 //
 type Pool struct {
