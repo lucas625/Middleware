@@ -8,11 +8,11 @@ import (
 //
 // Members:
 //  Servants - list of Servant objects.
-//  CurrentSize - total number of used Servants.
+//  CurrentIdx - total number of used Servants.
 //
 type Pool struct {
-	Servants    []interface{}
-	CurrentSize int
+	Servants   []interface{}
+	CurrentIdx int
 }
 
 // AddToPool is a function to add a servant to the pool.
@@ -24,12 +24,7 @@ type Pool struct {
 //  none
 //
 func (cPool *Pool) AddToPool(serv interface{}) {
-	if len(cPool.Servants) <= cPool.CurrentSize {
-		log.Fatalln("Reached pool limit.")
-	} else {
-		cPool.Servants[cPool.CurrentSize] = serv
-		cPool.CurrentSize++
-	}
+	cPool.Servants = append(cPool.Servants, serv)
 }
 
 // GetFromPool is a function to get a servant from the pool.
@@ -41,30 +36,24 @@ func (cPool *Pool) AddToPool(serv interface{}) {
 //  the servant.
 //
 func (cPool *Pool) GetFromPool() interface{} {
-	if cPool.CurrentSize <= 0 {
+	if len(cPool.Servants) <= 0 {
 		log.Fatalln("Empty pool.")
 		return nil
 	}
-	servHolder := cPool.Servants[0]
-	cPool.Servants[0] = cPool.Servants[cPool.CurrentSize-1]
-	cPool.CurrentSize--
+	servHolder := cPool.Servants[cPool.CurrentIdx]
+	cPool.CurrentIdx = (cPool.CurrentIdx + 1) % len(cPool.Servants)
 	return servHolder
 }
 
 // Initpool is a function to initialize a pool.
 //
 // Parameters:
-//  size - the pool size.
+//  servs - the servants of the pool.
 //
 // Returns:
 //  the pool.
 //
-func Initpool(size int) *Pool {
-	if size > 0 {
-		var servants []interface{}
-		servants = make([]interface{}, size)
-		calcP := Pool{Servants: servants, CurrentSize: 0}
-		return &calcP
-	}
-	return nil
+func Initpool(servs []interface{}) *Pool {
+	calcP := Pool{Servants: servs, CurrentIdx: 0}
+	return &calcP
 }
