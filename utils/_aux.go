@@ -1,8 +1,8 @@
-package aux
+package utils
 
 type Invocation struct {
-	Host string
-	Port int
+	Host    string
+	Port    int
 	Request Request
 }
 
@@ -22,6 +22,5 @@ type Request struct {
 }
 
 type Reply struct {
-	Result []interface{};
+	Result []interface{}
 }
-
