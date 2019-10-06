@@ -16,7 +16,7 @@ func main() {
 	namingProxy := proxy.NamingProxy{}
 
 	// create a proxy of calculator service
-	calculator := proxies.NewClientProxy()
+	multiplicador := proxies.NewClientProxy()
 	//converter := proxies.NewConverterProxy()
 
 	// register service in the naming service
