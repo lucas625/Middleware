@@ -46,8 +46,8 @@ func (proxy ClientProxy) Mul (p1 int) int {
 	// Sets up the necessary structs for the requestor
 	params := make([]interface{},1)
 	params[0] = p1
-	request := aux.Request{"Mul", params}
-	inv := aux.Invocation {Host:proxy.ClientProxy.Host, Port:proxy.ClientProxy.Port, Request:request}
+	request := utils.Request{"Mul", params}
+	inv := utils.Invocation {Host:proxy.Host, Port:proxy.Port, Request:request}
 
 	// Invokes requestor
 	req := requestor.Requestor{}
