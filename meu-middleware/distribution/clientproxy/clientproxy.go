@@ -3,7 +3,8 @@ package clientproxy
 import (
 	"github.com/lucas625/Middleware/meu-middleware/distribution/requestor"
 	"github.com/lucas625/Middleware/utils"
-	"github.com/lucas625/Middleware/meu-middleware/identification/reference"
+	//"github.com/lucas625/Middleware/meu-middleware/identification/reference"
+	"reflect"
 )
 // ClientProxy is a struct that holds the data need to contact the server
 //
@@ -18,7 +19,18 @@ type ClientProxy struct {
 	Port     int
 	ID       int
 	TypeName string
-	AOR      reference.AbsoluteObjectReference
+	//AOR      reference.AbsoluteObjectReference
+}
+
+// NewClientProxy is a constructor for ClientProxy
+//
+func NewClientProxy() ClientProxy {
+	p := new(ClientProxy)
+
+	p.Proxy.TypeName = reflect.TypeOf(ClientProxy{}).String()
+	p.Proxy.Host = "localhost"
+	p.Proxy.Port = 8080
+	return *p
 }
 
 // Mul is a funcion that receives a number and returns its double
