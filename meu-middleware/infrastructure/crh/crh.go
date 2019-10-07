@@ -1,10 +1,11 @@
 package crh
 
 import (
+	"encoding/binary"
+	"fmt"
+	"log"
 	"net"
 	"strconv"
-	"log"
-	"encoding/binary"
 )
 
 // CRH is a structure for Client to Server setups.
@@ -32,6 +33,7 @@ func (crh CRH) SendReceive(msgToServer []byte) []byte {
 	var conn net.Conn
 	var err error
 	for {
+		fmt.Println("aaaaaaaaaaa")
 		conn, err = net.Dial("tcp", "localhost:"+strconv.Itoa(crh.ServerPort))
 		if err == nil {
 			//log.Fatalf("CRH:: %s", err)
@@ -74,4 +76,3 @@ func (crh CRH) SendReceive(msgToServer []byte) []byte {
 
 	return msgFromServer
 }
-

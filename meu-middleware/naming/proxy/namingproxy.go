@@ -5,6 +5,8 @@ import (
 	"github.com/lucas625/Middleware/utils"
 	"github.com/lucas625/Middleware/meu-middleware/repository"
 	"github.com/lucas625/Middleware/meu-middleware/distribution/clientproxy"
+
+	"fmt"
 )
 
 // NamingProxy is a struct for naming
@@ -32,11 +34,11 @@ func (NamingProxy) Register(p1 string, proxy interface{}) bool {
 	namingproxy := clientproxy.ClientProxy{Host:"",Port:8081,ID:0}
 	request := utils.Request{Op: "Register", Params: params}
 	inv := utils.Invocation{Host: namingproxy.Host, Port: namingproxy.Port,Request: request}
-
+	fmt.Println("hue")
 	// invoke requestor
 	req := requestor.Requestor{}
 	ter := req.Invoke(inv).([]interface{})
-
+	fmt.Println("whay")
 	return ter[0].(bool)
 }
 

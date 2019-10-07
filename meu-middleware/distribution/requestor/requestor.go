@@ -5,6 +5,7 @@ import (
 	"github.com/lucas625/Middleware/meu-middleware/infrastructure/crh"
 	"github.com/lucas625/Middleware/meu-middleware/distribution/miop"
 	"github.com/lucas625/Middleware/utils"
+	"fmt"
 )
 
 // Requestor is a structure to enable Requestor funcions
@@ -35,11 +36,12 @@ func (Requestor) Invoke(inv utils.Invocation) interface{} {
 
 	// serialise request packet
 	msgToClientBytes := marshallerInst.Marshall(miopPacketRequest)
-
+	
 	// send request packet and receive reply packet
 	msgFromServerBytes := crhInst.SendReceive(msgToClientBytes)
+	fmt.Println("oi")
 	miopPacketReply := marshallerInst.Unmarshall(msgFromServerBytes)
-
+	
 	// extract result from reply packet
 	r := miopPacketReply.Bd.RepBody.OperationResult
 

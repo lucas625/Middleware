@@ -18,11 +18,11 @@ func main() {
 	// create a proxy of calculator service
 	multiplicador := clientproxy.NewClientProxy()
 	//converter := proxies.NewConverterProxy()
-
+	fmt.Println(3)
 	// register service in the naming service
 	namingProxy.Register("Multiplicador", multiplicador)
 	//namingProxy.Register("Converter", converter)
-
+	fmt.Println(4)
 	// control loop passed to middleware
 	fmt.Println("Multiplicator Server running!!")
 	multiplicadorInvoker := invoker.NewMultiplicadorInvoker()
