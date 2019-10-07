@@ -28,7 +28,9 @@ type CalculatorProxy struct {
 //  the result.
 //
 func (proxy CalculatorProxy) Mul(p1 int) int {
-	rq := utils.Request{}
+	param := make([]interface{}, 1)
+	param[0] = p1
+	rq := utils.Request{Op: "Mul", Params: param}
 	inv := utils.Invocation{Host: proxy.Host, Port: proxy.Port, Request: rq}
 	reqtor := requestor.Requestor{}
 	result := reqtor.Invoke(inv).(int)

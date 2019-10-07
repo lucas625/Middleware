@@ -6,6 +6,8 @@ import (
 	"github.com/lucas625/Middleware/my-middleware/server/infrastructure/srh"
 	"github.com/lucas625/Middleware/my-middleware/server/distribution/lifecycle-management/pooling"
 	"github.com/lucas625/Middleware/my-middleware/server/service/calculator"
+
+	"fmt"
 )
 
 // CalculatorInvoker is a structure to run the invoker.
@@ -36,8 +38,9 @@ func (CalculatorInvoker) Invoke (){
 	multPool := pooling.InitPool(calculatorList)
 	defer pooling.EndPool(multPool)
 
+	fmt.Println("Server invoking.")
+
 	for {
-		print("Server invoking.")
 		srhImpl := srh.SRH{ServerHost:"localhost", ServerPort:8080}
 		
 		// Receive data

@@ -1,4 +1,4 @@
-package NamingService
+package namingService
 
 import (
 	"errors"
