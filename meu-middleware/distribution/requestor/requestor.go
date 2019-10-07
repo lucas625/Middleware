@@ -27,7 +27,7 @@ func (Requestor) Invoke(inv utils.Invocation) interface{} {
 	crhInst := crh.CRH{ServerHost:inv.Host,ServerPort:inv.Port}
 
 	// create request packet
-	reqHeader := miop.RequestHeader{Context:"Context",RequestId:1000,ResponseExpected:true,ObjectKey:2000,Operation:inv.Request.Op}
+	reqHeader := miop.RequestHeader{Context:"Context",RequestID:1000,ResponseExpected:true,ObjectKey:2000,Operation:inv.Request.Op}
 	reqBody := miop.RequestBody{Body:inv.Request.Params}
 	header := miop.Header{Magic:"MIOP",Version:"1.0",ByteOrder:true,MessageType:1} // MessageType = 1 == Request
 	body := miop.Body{ReqHeader:reqHeader,ReqBody:reqBody}

@@ -2,22 +2,36 @@ package proxy
 
 import (
 	"github.com/lucas625/Middleware/meu-middleware/distribution/requestor"
-	"github.com/lucas625/Middleware/meu-middleware/distribution/utils"
+	"github.com/lucas625/Middleware/utils"
 	"github.com/lucas625/Middleware/meu-middleware/repository"
 	"github.com/lucas625/Middleware/meu-middleware/distribution/clientproxy"
 )
 
+// NamingProxy is a struct for naming
+//
+// Members:
+//  none
+//
 type NamingProxy struct{}
 
+// Register is a function to register on the naming proxy.
+//
+// Parameters:
+//  p1    - the key.
+//  proxy - the proxy.
+//
+// Returns:
+//  a boolean checking if was ok.
+//
 func (NamingProxy) Register(p1 string, proxy interface{}) bool {
 
 	// prepare invocation
 	params := make([]interface{}, 2)
 	params[0] = p1
 	params[1] = proxy
-	namingproxy := clientproxy.ClientProxy{Host:"",Port:8081,Id:0}
-	request := aux.Request{Op: "Register", Params: params}
-	inv := aux.Invocation{Host: namingproxy.Host, Port: namingproxy.Port,Request: request}
+	namingproxy := clientproxy.ClientProxy{Host:"",Port:8081,ID:0}
+	request := utils.Request{Op: "Register", Params: params}
+	inv := utils.Invocation{Host: namingproxy.Host, Port: namingproxy.Port,Request: request}
 
 	// invoke requestor
 	req := requestor.Requestor{}
@@ -26,13 +40,21 @@ func (NamingProxy) Register(p1 string, proxy interface{}) bool {
 	return ter[0].(bool)
 }
 
+// Lookup is a function to search the name.
+//
+// Parameters:
+//  p1 - the key.
+//
+// Returns:
+//  the service.
+//
 func (NamingProxy) Lookup(p1 string) interface{} {
 	// prepare invocation
 	params := make([]interface{}, 1)
 	params[0] = p1
-	namingproxy := clientproxy.ClientProxy{Host:"",Port:8081,Id:0}
-	request := aux.Request{Op: "Lookup", Params: params}
-	inv := aux.Invocation{Host:namingproxy.Host,Port:namingproxy.Port,Request:request}
+	namingproxy := clientproxy.ClientProxy{Host:"",Port:8081,ID:0}
+	request := utils.Request{Op: "Lookup", Params: params}
+	inv := utils.Invocation{Host:namingproxy.Host,Port:namingproxy.Port,Request:request}
 
 	// invoke requestor
 	req := requestor.Requestor{}

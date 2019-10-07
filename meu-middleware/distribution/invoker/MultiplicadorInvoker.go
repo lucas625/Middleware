@@ -51,6 +51,7 @@ func (MultiplicadorInvoker) Invoke (){
 	defer pooling.EndPool(multPool)
 
 	for {
+		print("Server invoking")
 		// Receive data
 		rcvMsgBytes := srhImpl.Receive()
 
@@ -71,7 +72,7 @@ func (MultiplicadorInvoker) Invoke (){
 		}
 
 		// assembly packet
-		repHeader := miop.ReplyHeader{Context:"", RequestId: miopPacketRequest.Bd.ReqHeader.RequestId, Status:1}
+		repHeader := miop.ReplyHeader{Context:"", RequestID: miopPacketRequest.Bd.ReqHeader.RequestID, Status:1}
 		repBody   := miop.ReplyBody{OperationResult: replParams}
 		header    := miop.Header{Magic:"MIOP", Version:"1.0", ByteOrder:true, MessageType:1} // MessageType 1 = request
 		body      := miop.Body{RepHeader: repHeader, RepBody: repBody}

@@ -27,9 +27,9 @@ type ClientProxy struct {
 func NewClientProxy() ClientProxy {
 	p := new(ClientProxy)
 
-	p.Proxy.TypeName = reflect.TypeOf(ClientProxy{}).String()
-	p.Proxy.Host = "localhost"
-	p.Proxy.Port = 8080
+	p.TypeName = reflect.TypeOf(ClientProxy{}).String()
+	p.Host = "localhost"
+	p.Port = 8080
 	return *p
 }
 
