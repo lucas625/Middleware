@@ -11,8 +11,8 @@ import (
 // CRH is a structure for Client to Server setups.
 //
 // Members:
-//  ServerHost - server's host IP.
-//  ServerPort - server's host port.
+//  ServerHost - server host IP.
+//  ServerPort - server host port.
 //
 type CRH struct {
 	ServerHost string
@@ -44,7 +44,7 @@ func (crh CRH) SendReceive(msgToServer []byte) []byte {
 
 	defer conn.Close()
 
-	// send message's size
+	// send message size
 	sizeMsgToServer := make([]byte, 4)
 	l := uint32(len(msgToServer))
 	binary.LittleEndian.PutUint32(sizeMsgToServer, l)
@@ -59,7 +59,7 @@ func (crh CRH) SendReceive(msgToServer []byte) []byte {
 		log.Fatalf("CRH:: %s", err)
 	}
 
-	// receive message's size
+	// receive message size
 	sizeMsgFromServer := make([]byte, 4)
 	_, err = conn.Read(sizeMsgFromServer)
 	if err != nil {

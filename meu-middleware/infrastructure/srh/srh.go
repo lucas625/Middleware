@@ -1,17 +1,17 @@
 package srh
 
 import (
+	"encoding/binary"
+	"log"
 	"net"
 	"strconv"
-	"log"
-	"encoding/binary"
 )
 
 // SRH is a structure for Server to Client setups.
 //
 // Members:
-//  ServerHost - server's host IP.
-//  ServerPort - server's host port.
+//  ServerHost - server host IP.
+//  ServerPort - server host port.
 //
 type SRH struct {
 	ServerHost string
@@ -44,7 +44,7 @@ func (srh SRH) Receive() []byte {
 		log.Fatalf("SRH:: %s", err)
 	}
 
-	// receive message's size
+	// receive message size
 	size := make([]byte, 4)
 	_, err = conn.Read(size)
 	if err != nil {
@@ -72,7 +72,7 @@ func (srh SRH) Receive() []byte {
 //
 func (SRH) Send(msgToClient []byte) {
 
-	// send message's size
+	// send message size
 	size := make([]byte, 4)
 	l := uint32(len(msgToClient))
 	binary.LittleEndian.PutUint32(size, l)
@@ -91,6 +91,3 @@ func (SRH) Send(msgToClient []byte) {
 	conn.Close()
 	ln.Close()
 }
-
-
-

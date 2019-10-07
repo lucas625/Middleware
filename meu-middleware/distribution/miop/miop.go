@@ -31,10 +31,10 @@ type Header struct {
 // Body is a structure for holding the information of the body of the packet.
 //
 // Member:
-//  ReqHeader   - body's header for request.
-//  ReqBody     - body's body for request.
-//  RepHeader   - body's header for reply.
-//  RepBody     - body's body for reply.
+//  ReqHeader   - body header for request.
+//  ReqBody     - body body for request.
+//  RepHeader   - body header for reply.
+//  RepBody     - body body for reply.
 //
 type Body struct {
 	ReqHeader RequestHeader
@@ -63,7 +63,7 @@ type RequestHeader struct {
 // RequestBody is a structure for bodies from requests.
 //
 // Member:
-//  Body - the body's data.
+//  Body - the body data.
 //
 type RequestBody struct {
 	Body []interface{}
