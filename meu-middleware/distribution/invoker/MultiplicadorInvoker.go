@@ -37,7 +37,6 @@ func NewMultiplicadorInvoker() MultiplicadorInvoker {
 //  none
 //
 func (MultiplicadorInvoker) Invoke (){
-	srhImpl := srh.SRH{ServerHost:"localhost",ServerPort:8080}
 	marshallerImpl := marshaller.Marshaller{}
 	miopPacketReply := miop.Packet{}
 	replParams := make([]interface{}, 1)
@@ -52,6 +51,8 @@ func (MultiplicadorInvoker) Invoke (){
 
 	for {
 		print("Server invoking")
+		srhImpl := srh.SRH{ServerHost:"localhost",ServerPort:8080}
+		
 		// Receive data
 		rcvMsgBytes := srhImpl.Receive()
 
