@@ -14,7 +14,7 @@ func ExecuteExperiment() {
 	namingService := proxy.NamingProxy{}
 
 	// look for a service in naming service
-	multiplicador := namingService.Lookup("Multiplicador").(proxies.ClientProxy)
+	multiplicador := namingService.Lookup("Multiplicador").(clientproxy.ClientProxy)
 
 	// invoke remote operation
 	for i := 0; i < 5000; i++ {

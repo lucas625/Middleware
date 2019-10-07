@@ -22,7 +22,7 @@ type Requestor struct{}
 // Returns:
 // interface
 //
-func (Requestor) Invoke(inv aux.Invocation) interface{} {
+func (Requestor) Invoke(inv utils.Invocation) interface{} {
 	marshallerInst := marshaller.Marshaller{}
 	crhInst := crh.CRH{ServerHost:inv.Host,ServerPort:inv.Port}
 
