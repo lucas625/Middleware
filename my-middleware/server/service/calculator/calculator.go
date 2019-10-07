@@ -5,7 +5,7 @@ package calculator
 // Members:
 //  none
 //
-type calculator struct{}
+type Calculator struct{}
 
 // Mul is a function for multiplying a number by 2.
 //
@@ -15,6 +15,6 @@ type calculator struct{}
 // Returns:
 //  the result.
 //
-func (calculator) Mul(x int) int {
+func (Calculator) Mul(x int) int {
 	return x * 2
 }
