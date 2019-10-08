@@ -51,14 +51,16 @@ func doSomething() {
 
 func main() {
 	numberOfCalls := 10000
+	perCall := 500
+	aux := numberOfCalls / perCall
 	// creating the calcvalues object
 	calc := utils.InitCalcValues(make([]float64, numberOfCalls, numberOfCalls))
 	var wg sync.WaitGroup
 	go doSomething()
-	aux := numberOfCalls / 500
+
 	for i := 0; i < aux; i++ {
 		wg.Add(1)
-		go runExperiment(500, &wg, &calc, (i * 500))
+		go runExperiment(perCall, &wg, &calc, (i * perCall))
 		wg.Wait()
 	}
 
