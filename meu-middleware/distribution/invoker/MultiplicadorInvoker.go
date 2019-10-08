@@ -54,7 +54,7 @@ func (MultiplicadorInvoker) Invoke (){
 		srhImpl := srh.SRH{ServerHost:"localhost",ServerPort:8080}
 		
 		// Receive data
-		rcvMsgBytes := srhImpl.Receive()
+		rcvMsgBytes := (&srhImpl).Receive()
 
 		// 	unmarshall
 		miopPacketRequest := marshallerImpl.Unmarshall(rcvMsgBytes)
@@ -83,6 +83,6 @@ func (MultiplicadorInvoker) Invoke (){
 		msgToClientBytes := marshallerImpl.Marshall(miopPacketReply)
 
 		// send Reply
-		srhImpl.Send(msgToClientBytes)
+		(&srhImpl).Send(msgToClientBytes)
 	}
 }

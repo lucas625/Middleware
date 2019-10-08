@@ -31,7 +31,7 @@ type SRH struct {
 // Returns:
 // Message received from client
 //
-func (srh SRH) Receive() []byte {
+func (srh *SRH) Receive() []byte {
 	var err error
 
 	// create listener
@@ -65,7 +65,7 @@ func (srh SRH) Receive() []byte {
 // Returns:
 // none
 //
-func (srh SRH) Send(msgToClient []byte) {
+func (srh *SRH) Send(msgToClient []byte) {
 	// close connection
 	defer srh.conn.Close()
 	defer srh.ln.Close()

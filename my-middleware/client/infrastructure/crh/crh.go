@@ -2,7 +2,6 @@ package crh
 
 import (
 	"encoding/binary"
-	"fmt"
 	"net"
 	"strconv"
 
@@ -34,7 +33,6 @@ func (crh CRH) SendReceive(msgToServer []byte) []byte {
 	var conn net.Conn
 	var err error
 	for {
-		fmt.Println("Trying to connect to server.")
 		conn, err = net.Dial("tcp", "localhost:"+strconv.Itoa(crh.ServerPort))
 		if err == nil {
 			// connected to server.
@@ -43,7 +41,6 @@ func (crh CRH) SendReceive(msgToServer []byte) []byte {
 
 	}
 	defer conn.Close()
-	fmt.Println("Connected to server.")
 
 	// send message size
 	sizeMsgToServer := make([]byte, 4)

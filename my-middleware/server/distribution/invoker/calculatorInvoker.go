@@ -44,7 +44,7 @@ func (CalculatorInvoker) Invoke (){
 		srhImpl := srh.SRH{ServerHost:"localhost", ServerPort:8080}
 		
 		// Receive data
-		rcvMsgBytes := srhImpl.Receive()
+		rcvMsgBytes := (&srhImpl).Receive()
 
 		// 	unmarshall
 		packetPacketRequest := marshallerImpl.Unmarshall(rcvMsgBytes)
@@ -73,6 +73,6 @@ func (CalculatorInvoker) Invoke (){
 		msgToClientBytes := marshallerImpl.Marshall(packetPacketReply)
 
 		// send Reply
-		srhImpl.Send(msgToClientBytes)
+		(&srhImpl).Send(msgToClientBytes)
 	}
 }

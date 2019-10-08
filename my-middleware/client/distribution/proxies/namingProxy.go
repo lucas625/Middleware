@@ -36,9 +36,12 @@ func (sv Server) Lookup(name string) interface{} {
 	reqtor := requestor.Requestor{}
 	// getting the reply
 	reply := reqtor.Invoke(inv).([]interface{})
-	cp := reply[0].(clientproxy.ClientProxy)
-	err := reply[1].(error)
-	utils.PrintError(err, "unable to lookup on naming proxy")
+	if reply[1] != nil {
+		err := reply[1].(error)
+		utils.PrintError(err, "unable to lookup on naming proxy")
+	}
+	rpMap := reply[0].(map[string]interface{})
+	cp := clientproxy.InitClientProxy(rpMap["Host"].(string), int(rpMap["Port"].(float64)), int(rpMap["ID"].(float64)), rpMap["TypeName"].(string))
 	// getting the result
 	var result interface{}
 	switch cp.TypeName {
@@ -67,8 +70,10 @@ func (sv Server) Bind(name string, cp clientproxy.ClientProxy) {
 	reqtor := requestor.Requestor{}
 	// getting the result
 	reply := reqtor.Invoke(inv).([]interface{})
-	err := reply[0].(error)
-	utils.PrintError(err, "unable to lookup on naming proxy")
+	if reply[0] != nil {
+		err := reply[0].(error)
+		utils.PrintError(err, "unable to bind on naming proxy")
+	}
 }
 
 // List is a function to get all clientproxies on the server.

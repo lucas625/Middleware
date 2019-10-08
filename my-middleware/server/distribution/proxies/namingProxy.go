@@ -41,7 +41,7 @@ func (sv Server) Run() {
 		srhImpl := srh.SRH{ServerHost: sv.IP, ServerPort: sv.Port}
 
 		// Receive data
-		rcvMsgBytes := srhImpl.Receive()
+		rcvMsgBytes := (&srhImpl).Receive()
 
 		// 	unmarshall
 		packetPacketRequest := marshallerImpl.Unmarshall(rcvMsgBytes)
@@ -60,6 +60,9 @@ func (sv Server) Run() {
 			p2 := clientproxy.InitClientProxy(bdConv["Host"].(string), int(bdConv["Port"].(float64)), int(bdConv["ID"].(float64)), bdConv["TypeName"].(string))
 			replParams = make([]interface{}, 1)
 			replParams[0] = sv.NS.Bind(p1, p2)
+			if replParams[0] != nil {
+				replParams[0] = replParams[0].(error)
+			}
 		case "List":
 			replParams = make([]interface{}, 1)
 			replParams[0] = sv.NS.List()
@@ -76,7 +79,7 @@ func (sv Server) Run() {
 		msgToClientBytes := marshallerImpl.Marshall(packetPacketReply)
 
 		// send Reply
-		srhImpl.Send(msgToClientBytes)
+		(&srhImpl).Send(msgToClientBytes)
 	}
 }
 
@@ -89,7 +92,8 @@ func (sv Server) Run() {
 //  the running server.
 //
 func InitServer() Server {
-	ns := namingService.NamingService{}
+	cpMap := make(map[string]clientproxy.ClientProxy)
+	ns := namingService.NamingService{Repository: cpMap}
 	sv := Server{NS: &ns, IP: "localhost", Port: 8090}
 	return sv
 }
