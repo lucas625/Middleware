@@ -24,7 +24,7 @@ func runExperiment(numberOfCalls int, wg *sync.WaitGroup, calc *utils.CalcValues
 	calculator := namingServer.Lookup("Calculator").(proxies.CalculatorProxy)
 
 	// executing
-	for i := start; i < numberOfCalls; i++ {
+	for i := 0; i < numberOfCalls; i++ {
 		initialTime := time.Now() //calculating time
 		result := calculator.Mul(i + start)
 		endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
@@ -43,9 +43,9 @@ func runExperiment(numberOfCalls int, wg *sync.WaitGroup, calc *utils.CalcValues
 //  none
 //
 func doSomething() {
-	for i := 0; i < 10; i++ {
+	for j := 0; j < 10; j++ {
 		time.Sleep(50 * time.Millisecond)
-		i--
+		j--
 	}
 }
 
@@ -58,7 +58,7 @@ func main() {
 	aux := numberOfCalls / 500
 	for i := 0; i < aux; i++ {
 		wg.Add(1)
-		go runExperiment(500, &wg, &calc, (i * aux))
+		go runExperiment(500, &wg, &calc, (i * 500))
 		wg.Wait()
 	}
 
