@@ -2,10 +2,10 @@ package crh
 
 import (
 	"encoding/binary"
-	"fmt"
-	"log"
 	"net"
 	"strconv"
+
+	"github.com/lucas625/Middleware/my-middleware/common/utils"
 )
 
 // CRH is a structure for Client to Server setups.
@@ -22,10 +22,10 @@ type CRH struct {
 // SendReceive is a funcion that receives a byte package and sends it to a server
 //
 // Parameters:
-// msgToServer - Package to be sent
+//  msgToServer - Package to be sent
 //
 // Returns:
-// Message received from server
+//  Message received from server
 //
 func (crh CRH) SendReceive(msgToServer []byte) []byte {
 
@@ -33,15 +33,13 @@ func (crh CRH) SendReceive(msgToServer []byte) []byte {
 	var conn net.Conn
 	var err error
 	for {
-		fmt.Println("aaaaaaaaaaa")
 		conn, err = net.Dial("tcp", "localhost:"+strconv.Itoa(crh.ServerPort))
 		if err == nil {
-			//log.Fatalf("CRH:: %s", err)
+			// connected to server.
 			break
 		}
 
 	}
-
 	defer conn.Close()
 
 	// send message size
@@ -49,30 +47,23 @@ func (crh CRH) SendReceive(msgToServer []byte) []byte {
 	l := uint32(len(msgToServer))
 	binary.LittleEndian.PutUint32(sizeMsgToServer, l)
 	conn.Write(sizeMsgToServer)
-	if err != nil {
-		log.Fatalf("CRH:: %s", err)
-	}
+	utils.PrintError(err, "unable to write size to server on client request handler")
 
 	// send message
 	_, err = conn.Write(msgToServer)
-	if err != nil {
-		log.Fatalf("CRH:: %s", err)
-	}
+	utils.PrintError(err, "unable to write message to server on client request handler")
 
 	// receive message size
 	sizeMsgFromServer := make([]byte, 4)
 	_, err = conn.Read(sizeMsgFromServer)
-	if err != nil {
-		log.Fatalf("SRH:: %s", err)
-	}
+	utils.PrintError(err, "unable to read size from server on client request handler")
+
 	sizeFromServerInt := binary.LittleEndian.Uint32(sizeMsgFromServer)
 
 	// receive reply
 	msgFromServer := make([]byte, sizeFromServerInt)
 	_, err = conn.Read(msgFromServer)
-	if err != nil {
-		log.Fatalf("SRH:: %s", err)
-	}
+	utils.PrintError(err, "unable to read message from server on client request handler")
 
 	return msgFromServer
 }

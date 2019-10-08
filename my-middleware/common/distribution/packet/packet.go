@@ -1,4 +1,4 @@
-package miop
+package packet
 
 // Packet is a structure for the default packet format.
 //
@@ -88,5 +88,5 @@ type ReplyHeader struct {
 //  OperationResult - the result of the request.
 //
 type ReplyBody struct {
-	OperationResult interface{}
+	OperationResult []interface{}
 }
