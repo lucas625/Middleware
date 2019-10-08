@@ -17,26 +17,21 @@ import (
 // Returns:
 //  none
 //
-func runExperiment(numberOfCalls int, wg *sync.WaitGroup, start int) {
+func runExperiment(numberOfCalls int, wg *sync.WaitGroup, calc *utils.CalcValues, start int) {
 	defer wg.Done()
 	// getting the clientproxy
 	namingServer := proxies.InitServer("localhost")
 	calculator := namingServer.Lookup("Calculator").(proxies.CalculatorProxy)
-	// creating the calcvalues object
-	calc := utils.InitCalcValues(make([]float64, numberOfCalls, numberOfCalls))
+
 	// executing
 	for i := start; i < numberOfCalls; i++ {
-		initialTime := time.Now()                                      //calculating time
-		fmt.Println(calculator.Mul(i))                                 // making the request
+		initialTime := time.Now() //calculating time
+		result := calculator.Mul(i + start)
 		endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
-		utils.AddValue(&calc, endTime)                                 // pushing to the stored values
-		//time.Sleep(10 * time.Millisecond)                              // setting the sleep time
+		fmt.Println(result)                                            // making the request
+		utils.AddValue(calc, endTime)                                  // pushing to the stored values
+		time.Sleep(10 * time.Millisecond)                              // setting the sleep time
 	}
-	// evaluating
-	avrg := utils.CalcAverage(&calc)
-	stdv := utils.CalcStandardDeviation(&calc, avrg)
-
-	utils.PrintEvaluation(avrg, stdv, 8)
 }
 
 // doSomething is a function to do some random stuff while the client is making requests.
@@ -49,18 +44,28 @@ func runExperiment(numberOfCalls int, wg *sync.WaitGroup, start int) {
 //
 func doSomething() {
 	for i := 0; i < 10; i++ {
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(50 * time.Millisecond)
 		i--
 	}
 }
 
 func main() {
-	numberOfCalls := 50
+	numberOfCalls := 10000
+	// creating the calcvalues object
+	calc := utils.InitCalcValues(make([]float64, numberOfCalls, numberOfCalls))
 	var wg sync.WaitGroup
-	for i := 0; i < 20; i++ {
+	go doSomething()
+	aux := numberOfCalls / 500
+	for i := 0; i < aux; i++ {
 		wg.Add(1)
-		go runExperiment(((i + 1) * numberOfCalls), &wg, (i * numberOfCalls))
+		go runExperiment(500, &wg, &calc, (i * aux))
 		wg.Wait()
 	}
-	go doSomething()
+
+	// evaluating
+	avrg := utils.CalcAverage(&calc)
+	stdv := utils.CalcStandardDeviation(&calc, avrg)
+
+	utils.PrintEvaluation(avrg, stdv, 8)
+
 }
