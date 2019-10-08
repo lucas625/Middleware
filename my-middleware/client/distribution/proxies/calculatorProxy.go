@@ -1,4 +1,4 @@
-package calculatorProxy
+package proxies
 
 import (
 	"github.com/lucas625/Middleware/my-middleware/client/distribution/requestor"
