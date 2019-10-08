@@ -35,7 +35,7 @@ func (proxy CalculatorProxy) Mul(p1 int) int {
 	reqtor := requestor.Requestor{}
 	// getting reply
 	reply := reqtor.Invoke(inv).([]interface{})
-	result := reply[0].(int)
+	result := int(reply[0].(float64))
 	return result
 }
 

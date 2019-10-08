@@ -33,7 +33,8 @@ func (CalculatorInvoker) Invoke (){
 	// creating the pool
 	calculatorList := make([]interface{}, 11)
 	for i := 0; i < len(calculatorList); i++ {
-		calculatorList[i] = calculator.Calculator{}
+		calcAux := calculator.Calculator{}
+		calculatorList[i] = &calcAux
 	}
 	multPool := pooling.InitPool(calculatorList)
 	defer pooling.EndPool(multPool)

@@ -3,10 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/lucas625/Middleware/meu-middleware/distribution/invoker"
-	//"calculadora/mymiddleware/server/invoker"
 	namingClient "github.com/lucas625/Middleware/my-middleware/client/distribution/proxies"
 	"github.com/lucas625/Middleware/my-middleware/common/distribution/clientproxy"
+	"github.com/lucas625/Middleware/my-middleware/server/distribution/invoker"
 	"github.com/lucas625/Middleware/my-middleware/server/distribution/proxies"
 )
 
@@ -22,9 +21,9 @@ func main() {
 	fmt.Println("Calculator registered!")
 	// control loop passed to middleware
 	fmt.Println("Multiplicator Server running!!")
-	multiplicadorInvoker := invoker.NewMultiplicadorInvoker()
+	calcInvoker := invoker.CalculatorInvoker{}
 
-	go multiplicadorInvoker.Invoke()
+	go calcInvoker.Invoke()
 	c := make(chan int)
 	<-c
 }
