@@ -88,5 +88,5 @@ type ReplyHeader struct {
 //  OperationResult - the result of the request.
 //
 type ReplyBody struct {
-	OperationResult interface{}
+	OperationResult []interface{}
 }

@@ -33,7 +33,9 @@ func (proxy CalculatorProxy) Mul(p1 int) int {
 	rq := utils.Request{Op: "Mul", Params: param}
 	inv := utils.Invocation{Host: proxy.Host, Port: proxy.Port, Request: rq}
 	reqtor := requestor.Requestor{}
-	result := reqtor.Invoke(inv).(int)
+	// getting reply
+	reply := reqtor.Invoke(inv).([]interface{})
+	result := reply[0].(int)
 	return result
 }
 

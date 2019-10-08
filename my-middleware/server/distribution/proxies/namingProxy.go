@@ -23,7 +23,7 @@ type Server struct {
 	Port int
 }
 
-// run is a function to run the server.
+// Run is a function to run the server.
 //
 // parameters:
 //  none.
@@ -31,7 +31,7 @@ type Server struct {
 // Returns:
 //  none
 //
-func (sv Server) run() {
+func (sv Server) Run() {
 	marshallerImpl := marshaller.Marshaller{}
 	packetPacketReply := packet.Packet{}
 	var replParams []interface{}
@@ -54,8 +54,10 @@ func (sv Server) run() {
 			replParams = make([]interface{}, 2)
 			replParams[0], replParams[1] = sv.NS.Lookup(p1)
 		case "Bind":
-			p1 := packetPacketRequest.Bd.ReqBody.Body[0].(string)
-			p2 := packetPacketRequest.Bd.ReqBody.Body[1].(clientproxy.ClientProxy)
+			bd := packetPacketRequest.Bd.ReqBody.Body
+			p1 := bd[0].(string)
+			bdConv := bd[1].(map[string]interface{})
+			p2 := clientproxy.InitClientProxy(bdConv["Host"].(string), int(bdConv["Port"].(float64)), int(bdConv["ID"].(float64)), bdConv["TypeName"].(string))
 			replParams = make([]interface{}, 1)
 			replParams[0] = sv.NS.Bind(p1, p2)
 		case "List":
@@ -78,7 +80,7 @@ func (sv Server) run() {
 	}
 }
 
-// InitServer is a function to set the naming service running.
+// InitServer is a function to create the naming server.
 //
 // parameters:
 //  none.
@@ -89,6 +91,5 @@ func (sv Server) run() {
 func InitServer() Server {
 	ns := namingService.NamingService{}
 	sv := Server{NS: &ns, IP: "localhost", Port: 8090}
-	go sv.run() // setting active
 	return sv
 }

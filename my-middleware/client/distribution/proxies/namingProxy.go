@@ -20,7 +20,7 @@ type Server struct {
 	Port int
 }
 
-// Lookup is a function to find the server of a an object.
+// Lookup is a function to find the server of an object.
 //
 // Parameters:
 //  name - the name of the object.
@@ -34,7 +34,12 @@ func (sv Server) Lookup(name string) interface{} {
 	rq := utils.Request{Op: "Lookup", Params: param}
 	inv := utils.Invocation{Host: sv.IP, Port: sv.Port, Request: rq}
 	reqtor := requestor.Requestor{}
-	cp := reqtor.Invoke(inv).(clientproxy.ClientProxy)
+	// getting the reply
+	reply := reqtor.Invoke(inv).([]interface{})
+	cp := reply[0].(clientproxy.ClientProxy)
+	err := reply[1].(error)
+	utils.PrintError(err, "unable to lookup on naming proxy")
+	// getting the result
 	var result interface{}
 	switch cp.TypeName {
 	case "Calculator":
@@ -42,7 +47,47 @@ func (sv Server) Lookup(name string) interface{} {
 	default:
 		utils.PrintError(errors.New("unrecognized clientproxy type"), "type of the clientproxy: "+cp.TypeName)
 	}
-	return result.(CalculatorProxy)
+	return result
+}
+
+// Bind is a function to register an object on the naming service.
+//
+// Parameters:
+//  name - the name of the object.
+//
+// Returns:
+//  none
+//
+func (sv Server) Bind(name string, cp clientproxy.ClientProxy) {
+	param := make([]interface{}, 2)
+	param[0] = name
+	param[1] = cp
+	rq := utils.Request{Op: "Bind", Params: param}
+	inv := utils.Invocation{Host: sv.IP, Port: sv.Port, Request: rq}
+	reqtor := requestor.Requestor{}
+	// getting the result
+	reply := reqtor.Invoke(inv).([]interface{})
+	err := reply[0].(error)
+	utils.PrintError(err, "unable to lookup on naming proxy")
+}
+
+// List is a function to get all clientproxies on the server.
+//
+// Parameters:
+//  none
+//
+// Returns:
+//  the map with the clientproxies
+//
+func (sv Server) List() map[string]clientproxy.ClientProxy {
+	param := make([]interface{}, 0)
+	rq := utils.Request{Op: "List", Params: param}
+	inv := utils.Invocation{Host: sv.IP, Port: sv.Port, Request: rq}
+	reqtor := requestor.Requestor{}
+	// getting the result
+	reply := reqtor.Invoke(inv).([]interface{})
+	result := reply[0].(map[string]clientproxy.ClientProxy)
+	return result
 }
 
 // InitServer is a function to locate a server.
