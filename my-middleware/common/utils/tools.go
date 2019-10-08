@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"strconv"
 )
 
 // PrintError is a function to print an error message.
@@ -102,7 +103,7 @@ func InitCalcValues(values []float64) CalcValues {
 // Returns:
 //  none
 //
-func PrintEvaluation(avrg float64, stdv float64) {
-	fmt.Printf("The Average RTT was: %0.4fms.\n", avrg)
-	fmt.Printf("The Standard Deviation on the RTT was: %0.4fms.\n", stdv)
+func PrintEvaluation(avrg float64, stdv float64, decimalPlaces int) {
+	fmt.Printf("The Average RTT was: %0."+strconv.Itoa(decimalPlaces)+"fms.\n", avrg)
+	fmt.Printf("The Standard Deviation on the RTT was: %0."+strconv.Itoa(decimalPlaces)+"fms.\n", stdv)
 }
