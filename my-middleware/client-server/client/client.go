@@ -17,7 +17,7 @@ import (
 // Returns:
 //  none
 //
-func runExperiment(numberOfCalls int, wg *sync.WaitGroup) {
+func runExperiment(numberOfCalls int, wg *sync.WaitGroup, start int) {
 	defer wg.Done()
 	// getting the clientproxy
 	namingServer := proxies.InitServer("localhost")
@@ -25,12 +25,12 @@ func runExperiment(numberOfCalls int, wg *sync.WaitGroup) {
 	// creating the calcvalues object
 	calc := utils.InitCalcValues(make([]float64, numberOfCalls, numberOfCalls))
 	// executing
-	for i := 0; i < numberOfCalls; i++ {
+	for i := start; i < numberOfCalls; i++ {
 		initialTime := time.Now()                                      //calculating time
 		fmt.Println(calculator.Mul(i))                                 // making the request
 		endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
 		utils.AddValue(&calc, endTime)                                 // pushing to the stored values
-		time.Sleep(10 * time.Millisecond)                              // setting the sleep time
+		//time.Sleep(10 * time.Millisecond)                              // setting the sleep time
 	}
 	// evaluating
 	avrg := utils.CalcAverage(&calc)
@@ -49,15 +49,18 @@ func runExperiment(numberOfCalls int, wg *sync.WaitGroup) {
 //
 func doSomething() {
 	for i := 0; i < 10; i++ {
+		time.Sleep(10 * time.Millisecond)
 		i--
 	}
 }
 
 func main() {
-	numberOfCalls := 10000
+	numberOfCalls := 50
 	var wg sync.WaitGroup
-	wg.Add(1)
-	go runExperiment(numberOfCalls, &wg)
+	for i := 0; i < 20; i++ {
+		wg.Add(1)
+		go runExperiment(((i + 1) * numberOfCalls), &wg, (i * numberOfCalls))
+		wg.Wait()
+	}
 	go doSomething()
-	wg.Wait()
 }
