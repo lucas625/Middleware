@@ -9,6 +9,21 @@ import (
 	"github.com/lucas625/Middleware/utils"
 )
 
+// doSomething is a function to do some random stuff while the client is making requests.
+//
+// Parameters:
+//  none
+//
+// Returns:
+//  none
+//
+func doSomething() {
+	for j := 0; j < 10; j++ {
+		time.Sleep(50 * time.Millisecond)
+		j--
+	}
+}
+
 func main() {
 	numberOfCalls := 10000 // the number of server calls
 
@@ -33,11 +48,11 @@ func main() {
 
 		fmt.Printf("%v\n", *&reply)
 
-		time.Sleep(25 * time.Millisecond)
+		time.Sleep(10 * time.Millisecond)
 	}
 	// evaluating
 	avrg := utils.CalcAverage(&calc)
 	stdv := utils.CalcStandardDeviation(&calc, avrg)
 
-	utils.PrintEvaluation(avrg, stdv)
+	utils.PrintEvaluation(avrg, stdv, 8)
 }
