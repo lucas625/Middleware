@@ -1,36 +1,32 @@
 package clientproxy
 
+import (
+	"github.com/lucas625/Middleware/LLgRPC/common/distribution/absoluteobjectreference"
+)
+
 // ClientProxy is a struct that holds the data need to contact the server.
 //
 // Members:
-//  Host     - Holds an ip address.
-//  Port     - Stores the used port.
-//  ID       - Identifies the process.
+//  AOR      - Holds the absolute object reference.
 //  TypeName - Declares the type used.
 //
 type ClientProxy struct {
-	Host     string
-	Port     int
-	ID       int
+	AOR      absoluteobjectreference.AOR
 	TypeName string
 }
 
 // InitClientProxy is a function to initialize a client proxy.
 //
 // Parameters:
-//  host     - Holds an ip address.
-//  port     - Stores the used port.
-//  id       - Identifies the process.
+//  aor      - Absolute object reference.
 //  typename - Declares the type used.
 //
 // Returns:
 //  a client proxy
 //
-func InitClientProxy(host string, port, id int, typename string) ClientProxy {
+func InitClientProxy(aor absoluteobjectreference.AOR, typename string) ClientProxy {
 	var cp ClientProxy
-	cp.Host = host
-	cp.Port = port
-	cp.ID = id
+	cp.AOR = aor
 	cp.TypeName = typename
 	return cp
 }

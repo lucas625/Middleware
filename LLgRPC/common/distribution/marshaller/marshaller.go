@@ -2,9 +2,9 @@ package marshaller
 
 import (
 	"encoding/json"
-	"log"
 
 	"github.com/lucas625/Middleware/LLgRPC/common/distribution/packet"
+	"github.com/lucas625/Middleware/LLgRPC/common/utils"
 )
 
 // Marshaller is a structure to enable Marshaller funcions
@@ -25,9 +25,7 @@ type Marshaller struct{}
 func (Marshaller) Marshall(msg packet.Packet) []byte {
 
 	r, err := json.Marshal(msg)
-	if err != nil {
-		log.Fatalf("Marshaller:: Marshall:: %s", err)
-	}
+	utils.PrintError(err, "Failed to marshal.")
 
 	return r
 }
@@ -44,8 +42,6 @@ func (Marshaller) Unmarshall(msg []byte) packet.Packet {
 
 	r := packet.Packet{}
 	err := json.Unmarshal(msg, &r)
-	if err != nil {
-		log.Fatalf("Marshaller:: Unmarshall:: %s", err)
-	}
+	utils.PrintError(err, "Failed to unmarshal.")
 	return r
 }

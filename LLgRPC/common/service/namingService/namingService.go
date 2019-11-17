@@ -51,6 +51,23 @@ func (naming *NamingService) Lookup(name string) (clientproxy.ClientProxy, error
 	return cp, nil
 }
 
+// Unbind is a function to remove a ClientProxy from the repository.
+//
+// Parameters:
+//  name - the name key to the ClientProxy.
+//
+// Returns:
+//  an error if was unable to find the name.
+//
+func (naming *NamingService) Unbind(name string) error {
+	_, present := naming.Repository[name]
+	if present {
+		delete(naming.Repository, name)
+		return nil
+	}
+	return errors.New("Name not in the naming service.")
+}
+
 // List is a function to return all data in the naming service.
 //
 // Parameters:
