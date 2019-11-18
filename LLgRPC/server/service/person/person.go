@@ -1,11 +1,5 @@
 package person
 
-import (
-	"errors"
-
-	"github.com/lucas625/Middleware/utils"
-)
-
 // PersonList is a structure for holding multiple persons.
 //
 // Members:
@@ -23,16 +17,17 @@ type PersonList struct {
 //  p - the person
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (plist *PersonList) AddPerson(p Person) {
+func (plist *PersonList) AddPerson(p Person) bool {
 	id := plist.NextID
 	if id >= cap(plist.Persons) {
 		plist.Persons = plist.Persons[:cap(plist.Persons)]
 	}
 	p.SetID(id)
-	plist.NextID += 1
+	plist.NextID++
 	plist.Persons = append(plist.Persons, p)
+	return true
 }
 
 // RemovePerson is a function for adding a person.
@@ -41,12 +36,16 @@ func (plist *PersonList) AddPerson(p Person) {
 //  id - the id of the person.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (plist *PersonList) RemovePerson(id int) {
+func (plist *PersonList) RemovePerson(id int) bool {
 	idx := plist.GetPerson(id)
+	if idx == -1 {
+		return false
+	}
 	plist.Persons[idx] = plist.Persons[len(plist.Persons)]
 	plist.Persons = plist.Persons[:len(plist.Persons)-1]
+	return true
 }
 
 // GetPerson is a function for getting a person idx by id.
@@ -63,9 +62,6 @@ func (plist *PersonList) GetPerson(id int) int {
 		if plist.Persons[i].GetID() == id {
 			idx = i
 		}
-	}
-	if idx == -1 {
-		utils.PrintError(errors.New("Unable to find person."), "Invalid id for person.")
 	}
 	return idx
 }

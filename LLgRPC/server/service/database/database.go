@@ -2,6 +2,7 @@ package database
 
 import (
 	"encoding/json"
+	"fmt"
 	"sync"
 
 	"github.com/lucas625/Middleware/LLgRPC/server/service/person"
@@ -21,16 +22,16 @@ type Database struct {
 // AddPerson is a function for adding a person.
 //
 // Parameters:
-//  p  - the new person.
+//  p - the new person.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (db *Database) AddPerson(p person.Person) {
+func (db *Database) AddPerson(p person.Person) bool {
 	db.Lock()
 	defer db.Unlock()
 	plist := db.Persons
-	plist.AddPerson(p)
+	return plist.AddPerson(p)
 }
 
 // RemovePerson is a function for removing a person.
@@ -39,13 +40,13 @@ func (db *Database) AddPerson(p person.Person) {
 //  id - the id of the person.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (db *Database) RemovePerson(id int) {
+func (db *Database) RemovePerson(id int) bool {
 	db.Lock()
 	defer db.Unlock()
 	plist := db.Persons
-	plist.RemovePerson(id)
+	return plist.RemovePerson(id)
 }
 
 // GetPerson is a function for getting a person.
@@ -61,6 +62,10 @@ func (db *Database) GetPerson(id int) person.Person {
 	defer db.Unlock()
 	plist := db.Persons
 	idx := plist.GetPerson(id)
+	if idx == -1 {
+		fmt.Println("Person not found.")
+		return *person.InitPerson("", 0, "", -1)
+	}
 	return plist.Persons[idx]
 }
 
@@ -71,15 +76,20 @@ func (db *Database) GetPerson(id int) person.Person {
 //  p  - the new person.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (db *Database) SetPerson(id int, p person.Person) {
+func (db *Database) SetPerson(id int, p person.Person) bool {
 	db.Lock()
 	defer db.Unlock()
 	plist := db.Persons
 	idx := plist.GetPerson(id)
+	if idx == -1 {
+		fmt.Println("Person not found.")
+		return false
+	}
 	p.SetID(id)
 	plist.Persons[idx] = p
+	return true
 }
 
 // SetName is a function for setting a person name.
@@ -89,14 +99,19 @@ func (db *Database) SetPerson(id int, p person.Person) {
 //  name  - the new name.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (db *Database) SetName(id int, name string) {
+func (db *Database) SetName(id int, name string) bool {
 	db.Lock()
 	defer db.Unlock()
 	plist := db.Persons
 	idx := plist.GetPerson(id)
+	if idx == -1 {
+		fmt.Println("Person not found.")
+		return false
+	}
 	plist.Persons[idx].SetName(name)
+	return true
 }
 
 // SetAge is a function for setting a person age.
@@ -106,14 +121,19 @@ func (db *Database) SetName(id int, name string) {
 //  age   - the new age.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (db *Database) SetAge(id int, age int) {
+func (db *Database) SetAge(id int, age int) bool {
 	db.Lock()
 	defer db.Unlock()
 	plist := db.Persons
 	idx := plist.GetPerson(id)
+	if idx == -1 {
+		fmt.Println("Person not found.")
+		return false
+	}
 	plist.Persons[idx].SetAge(age)
+	return true
 }
 
 // SetGender is a function for setting a person gender.
@@ -125,15 +145,20 @@ func (db *Database) SetAge(id int, age int) {
 // Returns:
 //  none
 //
-func (db *Database) SetGender(id int, gender string) {
+func (db *Database) SetGender(id int, gender string) bool {
 	db.Lock()
 	defer db.Unlock()
 	plist := db.Persons
 	idx := plist.GetPerson(id)
+	if idx == -1 {
+		fmt.Println("Person not found.")
+		return false
+	}
 	plist.Persons[idx].SetGender(gender)
+	return true
 }
 
-// DBToJson is a function for converting the database to json.
+// DBToJSON is a function for converting the database to json.
 //
 // Parameters:
 //  none
@@ -141,7 +166,7 @@ func (db *Database) SetGender(id int, gender string) {
 // Returns:
 //  the database as byte.
 //
-func (db *Database) DBToJson() []byte {
+func (db *Database) DBToJSON() []byte {
 	db.Lock()
 	defer db.Unlock()
 

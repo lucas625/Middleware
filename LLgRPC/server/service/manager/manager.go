@@ -2,6 +2,7 @@ package manager
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -27,10 +28,10 @@ type Manager struct {
 //  p  - the new person.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (man *Manager) AddPerson(p person.Person) {
-	man.DB.AddPerson(p)
+func (man *Manager) AddPerson(p person.Person) bool {
+	return man.DB.AddPerson(p)
 }
 
 // RemovePerson is a function for removing a person.
@@ -39,10 +40,10 @@ func (man *Manager) AddPerson(p person.Person) {
 //  id - the id of the person.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (man *Manager) RemovePerson(id int) {
-	man.DB.RemovePerson(id)
+func (man *Manager) RemovePerson(id int) bool {
+	return man.DB.RemovePerson(id)
 }
 
 // GetPerson is a function for getting a person.
@@ -64,10 +65,10 @@ func (man *Manager) GetPerson(id int) person.Person {
 //  p  - the new person.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (man *Manager) SetPerson(id int, p person.Person) {
-	man.DB.SetPerson(id, p)
+func (man *Manager) SetPerson(id int, p person.Person) bool {
+	return man.DB.SetPerson(id, p)
 }
 
 // GetName is a function for getting a person is name.
@@ -116,10 +117,10 @@ func (man *Manager) GetGender(id int) string {
 //  name - the name of the person.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (man *Manager) SetName(id int, name string) {
-	man.DB.SetName(id, name)
+func (man *Manager) SetName(id int, name string) bool {
+	return man.DB.SetName(id, name)
 }
 
 // SetAge is a function for setting a person is age.
@@ -129,10 +130,10 @@ func (man *Manager) SetName(id int, name string) {
 //  age - the age of the person.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (man *Manager) SetAge(id int, age int) {
-	man.DB.SetAge(id, age)
+func (man *Manager) SetAge(id int, age int) bool {
+	return man.DB.SetAge(id, age)
 }
 
 // SetGender is a function for setting a person is gender.
@@ -142,10 +143,10 @@ func (man *Manager) SetAge(id int, age int) {
 //  gender - the gender of the person.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (man *Manager) SetGender(id int, gender string) {
-	man.DB.SetGender(id, gender)
+func (man *Manager) SetGender(id int, gender string) bool {
+	return man.DB.SetGender(id, gender)
 }
 
 // Write is a function to write all data of the database.
@@ -158,7 +159,7 @@ func (man *Manager) SetGender(id int, gender string) {
 //
 func (man *Manager) Write(outPath string) {
 	// creating the json
-	file := man.DB.DBToJson()
+	file := man.DB.DBToJSON()
 	// getting the right path
 	filePath, err := filepath.Abs(path.Join(outPath, "database.json"))
 	utils.PrintError(err, "Unable to get database is absolute path.")
@@ -181,17 +182,22 @@ func (man *Manager) Write(outPath string) {
 //  none
 //
 func (man *Manager) Load(inPath string) {
-	// opening the file
-	dbFile, err := os.Open(inPath)
-	utils.PrintError(err, "Unable to open database.")
-	// converting to PersonList
-	byteDatabase, err := ioutil.ReadAll(dbFile)
-	utils.PrintError(err, "Unable to convert database file to bytes.")
-	var pList person.PersonList
-	err = json.Unmarshal(byteDatabase, &pList)
-	utils.PrintError(err, "Failed to unmarshal database.")
-	// loading the database
-	man.DB.LoadDatabase(&pList)
+	if utils.PathExists(inPath) {
+		// opening the file
+		dbFile, err := os.Open(inPath)
+		utils.PrintError(err, "Unable to open database.")
+		// converting to PersonList
+		byteDatabase, err := ioutil.ReadAll(dbFile)
+		utils.PrintError(err, "Unable to convert database file to bytes.")
+		var pList person.PersonList
+		err = json.Unmarshal(byteDatabase, &pList)
+		utils.PrintError(err, "Failed to unmarshal database.")
+		// loading the database
+		man.DB.LoadDatabase(&pList)
+		fmt.Println("Database loaded.")
+	} else {
+		fmt.Println("Unable to find database.json.")
+	}
 }
 
 // InitManager is a function for initializing the manager.
