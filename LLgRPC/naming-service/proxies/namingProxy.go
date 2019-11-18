@@ -54,10 +54,6 @@ func (sv Server) Run() {
 			p1 := packetPacketRequest.Bd.ReqBody.Body[0].(string)
 			replParams = make([]interface{}, 2)
 			replParams[0], replParams[1] = sv.NS.Lookup(p1)
-		case "Unbind":
-			p1 := packetPacketRequest.Bd.ReqBody.Body[0].(string)
-			replParams = make([]interface{}, 1)
-			replParams[0] = sv.NS.Unbind(p1)
 		case "Bind":
 			bd := packetPacketRequest.Bd.ReqBody.Body
 			p1 := bd[0].(string)

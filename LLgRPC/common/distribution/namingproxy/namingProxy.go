@@ -1,8 +1,9 @@
-package proxies
+package namingproxy
 
 import (
 	"errors"
 
+	"github.com/lucas625/Middleware/LLgRPC/client/distribution/proxies"
 	"github.com/lucas625/Middleware/LLgRPC/client/distribution/requestor"
 	"github.com/lucas625/Middleware/LLgRPC/common/distribution/absoluteobjectreference"
 	"github.com/lucas625/Middleware/LLgRPC/common/distribution/clientproxy"
@@ -53,7 +54,7 @@ func (sv Server) Lookup(name string) interface{} {
 	var result interface{}
 	switch cp.TypeName {
 	case "Manager":
-		result = ManagerProxy{AOR: cp.AOR}
+		result = proxies.ManagerProxy{AOR: cp.AOR}
 	default:
 		utils.PrintError(errors.New("unrecognized clientproxy type"), "type of the clientproxy: "+cp.TypeName)
 	}
