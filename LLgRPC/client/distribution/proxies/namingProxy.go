@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/lucas625/Middleware/LLgRPC/client/distribution/requestor"
+	"github.com/lucas625/Middleware/LLgRPC/common/distribution/absoluteobjectreference"
 	"github.com/lucas625/Middleware/LLgRPC/common/distribution/clientproxy"
 	"github.com/lucas625/Middleware/LLgRPC/common/utils"
 )
@@ -32,21 +33,27 @@ func (sv Server) Lookup(name string) interface{} {
 	param := make([]interface{}, 1)
 	param[0] = name
 	rq := utils.Request{Op: "Lookup", Params: param}
-	inv := utils.Invocation{Host: sv.IP, Port: sv.Port, Request: rq}
+	inv := utils.Invocation{AOR: absoluteobjectreference.AOR{IP: sv.IP, Port: sv.Port, Protocol: "tcp"}, Request: rq}
 	reqtor := requestor.Requestor{}
 	// getting the reply
 	reply := reqtor.Invoke(inv).([]interface{})
-	if reply[1] != nil {
-		err := reply[1].(error)
-		utils.PrintError(err, "unable to lookup on naming proxy")
+	if !reply[1].(bool) {
+		utils.PrintError(errors.New("Failed on call"), "unable to lookup on naming proxy")
 	}
 	rpMap := reply[0].(map[string]interface{})
-	cp := clientproxy.InitClientProxy(rpMap["Host"].(string), int(rpMap["Port"].(float64)), int(rpMap["ID"].(float64)), rpMap["TypeName"].(string))
+	aorMap := rpMap["AOR"].(map[string]interface{})
+	aor := absoluteobjectreference.InitAOR(
+		aorMap["IP"].(string),
+		int(aorMap["Port"].(float64)),
+		int(aorMap["InvokerID"].(float64)),
+		aorMap["Protocol"].(string),
+		int(aorMap["ObjectID"].(float64)))
+	cp := clientproxy.InitClientProxy(aor, rpMap["TypeName"].(string))
 	// getting the result
 	var result interface{}
 	switch cp.TypeName {
-	case "Calculator":
-		result = CalculatorProxy{Host: cp.Host, Port: cp.Port, ID: cp.ID}
+	case "Manager":
+		result = ManagerProxy{AOR: cp.AOR}
 	default:
 		utils.PrintError(errors.New("unrecognized clientproxy type"), "type of the clientproxy: "+cp.TypeName)
 	}
@@ -66,13 +73,12 @@ func (sv Server) Bind(name string, cp clientproxy.ClientProxy) {
 	param[0] = name
 	param[1] = cp
 	rq := utils.Request{Op: "Bind", Params: param}
-	inv := utils.Invocation{Host: sv.IP, Port: sv.Port, Request: rq}
+	inv := utils.Invocation{AOR: cp.AOR, Request: rq}
 	reqtor := requestor.Requestor{}
 	// getting the result
 	reply := reqtor.Invoke(inv).([]interface{})
-	if reply[0] != nil {
-		err := reply[0].(error)
-		utils.PrintError(err, "unable to bind on naming proxy")
+	if !reply[0].(bool) {
+		utils.PrintError(errors.New("Failed on call"), "unable to bind on naming proxy")
 	}
 }
 
@@ -82,12 +88,12 @@ func (sv Server) Bind(name string, cp clientproxy.ClientProxy) {
 //  none
 //
 // Returns:
-//  the map with the clientproxies
+//  the map with the clientproxies.
 //
 func (sv Server) List() map[string]clientproxy.ClientProxy {
 	param := make([]interface{}, 0)
 	rq := utils.Request{Op: "List", Params: param}
-	inv := utils.Invocation{Host: sv.IP, Port: sv.Port, Request: rq}
+	inv := utils.Invocation{AOR: absoluteobjectreference.AOR{IP: sv.IP, Port: sv.Port, Protocol: "tcp"}, Request: rq}
 	reqtor := requestor.Requestor{}
 	// getting the result
 	reply := reqtor.Invoke(inv).([]interface{})

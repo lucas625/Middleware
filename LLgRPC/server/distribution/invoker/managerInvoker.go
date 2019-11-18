@@ -5,11 +5,11 @@ import (
 
 	"github.com/lucas625/Middleware/LLgRPC/common/distribution/marshaller"
 	"github.com/lucas625/Middleware/LLgRPC/common/distribution/packet"
+	"github.com/lucas625/Middleware/LLgRPC/common/service/person"
 	"github.com/lucas625/Middleware/LLgRPC/server/distribution/lifecycle-management/pooling"
 	"github.com/lucas625/Middleware/LLgRPC/server/infrastructure/srh"
 	"github.com/lucas625/Middleware/LLgRPC/server/service/database"
 	"github.com/lucas625/Middleware/LLgRPC/server/service/manager"
-	"github.com/lucas625/Middleware/LLgRPC/server/service/person"
 )
 
 // ManagerInvoker is a structure to run the invoker.
@@ -68,11 +68,11 @@ func (ManagerInvoker) Invoke() {
 		// finding the operation
 		operation := packetPacketRequest.Bd.ReqHeader.Operation
 		switch operation {
-		case "Add":
+		case "AddPerson":
 			_p1 := packetPacketRequest.Bd.ReqBody.Body[0].(person.Person)
 			manA.AddPerson(_p1)
 			replParams[0] = nil
-		case "Remove":
+		case "RemovePerson":
 			_p1 := int(packetPacketRequest.Bd.ReqBody.Body[0].(float64))
 			replParams[0] = manA.RemovePerson(_p1)
 		case "GetPerson":

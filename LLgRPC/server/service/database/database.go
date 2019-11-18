@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/lucas625/Middleware/LLgRPC/server/service/person"
+	"github.com/lucas625/Middleware/LLgRPC/common/service/person"
 	"github.com/lucas625/Middleware/utils"
 )
 

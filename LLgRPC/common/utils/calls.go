@@ -7,11 +7,11 @@ import (
 // Invocation is a struct for invocation calls.
 //
 // Members:
-//  aor     - the absolute object reference.
+//  AOR     - the absolute object reference.
 //  Request - the request.
 //
 type Invocation struct {
-	aor     absoluteobjectreference.AOR
+	AOR     absoluteobjectreference.AOR
 	Request Request
 }
 

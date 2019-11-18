@@ -32,11 +32,12 @@ func (crh CRH) SendReceive(msgToServer []byte) []byte {
 	// connect to server
 	var conn net.Conn
 	var err error
-	for {
+	connected := false
+	for !connected {
 		conn, err = net.Dial("tcp", "localhost:"+strconv.Itoa(crh.ServerPort))
 		if err == nil {
 			// connected to server.
-			break
+			connected = true
 		}
 
 	}

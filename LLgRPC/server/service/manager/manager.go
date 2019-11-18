@@ -8,9 +8,9 @@ import (
 	"path"
 	"path/filepath"
 
+	"github.com/lucas625/Middleware/LLgRPC/common/service/person"
 	"github.com/lucas625/Middleware/LLgRPC/common/utils"
 	"github.com/lucas625/Middleware/LLgRPC/server/service/database"
-	"github.com/lucas625/Middleware/LLgRPC/server/service/person"
 )
 
 // Manager is a structure for managing the database.
@@ -25,7 +25,7 @@ type Manager struct {
 // AddPerson is a function for adding a person.
 //
 // Parameters:
-//  p  - the new person.
+//  p - the new person.
 //
 // Returns:
 //  a flag if went ok.
