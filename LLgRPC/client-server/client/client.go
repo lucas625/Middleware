@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/lucas625/Middleware/LLgRPC/client/distribution/proxies"
+	"github.com/lucas625/Middleware/LLgRPC/common/distribution/namingproxy"
+	"github.com/lucas625/Middleware/LLgRPC/common/service/person"
 	"github.com/lucas625/Middleware/LLgRPC/common/utils"
 )
 
@@ -20,18 +22,23 @@ import (
 func runExperiment(numberOfCalls int, wg *sync.WaitGroup, calc *utils.CalcValues, start int) {
 	defer wg.Done()
 	// getting the clientproxy
-	namingServer := proxies.InitServer("localhost")
-	calculator := namingServer.Lookup("Calculator").(proxies.CalculatorProxy)
-
+	namingServer := namingproxy.InitServer("localhost")
+	manager := namingServer.Lookup("Manager").(proxies.ManagerProxy)
 	// executing
 	for i := 0; i < numberOfCalls; i++ {
 		initialTime := time.Now() //calculating time
-		result := calculator.Mul(i + start)
+		p := person.InitPerson("lucas", 10, "M", 1)
+		result := manager.AddPerson(*p)
 		endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
 		fmt.Println(result)                                            // making the request
 		utils.AddValue(calc, endTime)                                  // pushing to the stored values
 		time.Sleep(10 * time.Millisecond)                              // setting the sleep time
 	}
+
+	if start >= 40 {
+		manager.Write("files")
+	}
+
 }
 
 // doSomething is a function to do some random stuff while the client is making requests.
@@ -50,8 +57,8 @@ func doSomething() {
 }
 
 func main() {
-	numberOfCalls := 10000
-	perCall := 500
+	numberOfCalls := 50
+	perCall := 10
 	aux := numberOfCalls / perCall
 	// creating the calcvalues object
 	calc := utils.InitCalcValues(make([]float64, numberOfCalls, numberOfCalls))

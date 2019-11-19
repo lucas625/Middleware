@@ -80,6 +80,23 @@ type Person struct {
 	id     int
 }
 
+// PersonToInterface is a function for converting a person to interface.
+//
+// Parameters:
+//  p - the person.
+//
+// Returns:
+//  name - the name of the person.
+//
+func PersonToInterface(p Person) map[string]interface{} {
+	per := make(map[string]interface{})
+	per["name"] = p.GetName()
+	per["age"] = p.GetAge()
+	per["gender"] = p.GetGender()
+	per["id"] = p.GetID()
+	return per
+}
+
 // GetName is a function for getting a person name.
 //
 // Parameters:

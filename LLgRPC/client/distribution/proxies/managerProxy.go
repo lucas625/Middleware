@@ -1,6 +1,8 @@
 package proxies
 
 import (
+	"fmt"
+
 	"github.com/lucas625/Middleware/LLgRPC/client/distribution/requestor"
 	"github.com/lucas625/Middleware/LLgRPC/common/distribution/absoluteobjectreference"
 	"github.com/lucas625/Middleware/LLgRPC/common/service/person"
@@ -16,6 +18,25 @@ type ManagerProxy struct {
 	AOR absoluteobjectreference.AOR
 }
 
+// Write is a function to write all data of the database.
+//
+// Parameters:
+//  outpath - path to write the database.
+//
+// Returns:
+//  none
+//
+func (proxy ManagerProxy) Write(path string) {
+	param := make([]interface{}, 1)
+	param[0] = path
+	rq := utils.Request{Op: "Write", Params: param}
+	inv := utils.Invocation{AOR: proxy.AOR, Request: rq}
+	reqtor := requestor.Requestor{}
+	// getting reply
+	reply := reqtor.Invoke(inv).([]interface{})
+	fmt.Println(reply)
+}
+
 // AddPerson is a function for adding a person.
 //
 // Parameters:
@@ -26,7 +47,7 @@ type ManagerProxy struct {
 //
 func (proxy ManagerProxy) AddPerson(p person.Person) bool {
 	param := make([]interface{}, 1)
-	param[0] = p
+	param[0] = person.PersonToInterface(p)
 	rq := utils.Request{Op: "AddPerson", Params: param}
 	inv := utils.Invocation{AOR: proxy.AOR, Request: rq}
 	reqtor := requestor.Requestor{}
@@ -91,7 +112,7 @@ func (proxy ManagerProxy) GetPerson(id int) person.Person {
 func (proxy ManagerProxy) SetPerson(id int, p person.Person) bool {
 	param := make([]interface{}, 2)
 	param[0] = id
-	param[1] = p
+	param[1] = person.PersonToInterface(p)
 	rq := utils.Request{Op: "SetPerson", Params: param}
 	inv := utils.Invocation{AOR: proxy.AOR, Request: rq}
 	reqtor := requestor.Requestor{}

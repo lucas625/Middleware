@@ -20,15 +20,15 @@ type NamingService struct {
 //  proxy - the ClientProxy to with the name key.
 //
 // Returns:
-//  a flag alerting for an error.
+//  a flag if went ok.
 //
 func (naming *NamingService) Bind(name string, proxy clientproxy.ClientProxy) bool {
 	_, present := naming.Repository[name]
 	if present {
-		return true
+		return false
 	}
 	naming.Repository[name] = proxy
-	return false
+	return true
 }
 
 // Lookup is a function to get a ClientProxy from the repository.
@@ -38,15 +38,15 @@ func (naming *NamingService) Bind(name string, proxy clientproxy.ClientProxy) bo
 //
 // Returns:
 //  the ClientProxy.
-//  a flag alerting for an error.
+//  a flag if went ok.
 //
 func (naming *NamingService) Lookup(name string) (clientproxy.ClientProxy, bool) {
 	cp, present := naming.Repository[name]
 	if !present {
 		var nilClientProxy clientproxy.ClientProxy // cannot return nil for struct
-		return nilClientProxy, true
+		return nilClientProxy, false
 	}
-	return cp, false
+	return cp, true
 }
 
 // List is a function to return all data in the naming service.

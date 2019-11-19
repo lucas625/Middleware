@@ -61,10 +61,10 @@ func (sv Server) Run() {
 			bdaor := bdConv["AOR"].(map[string]interface{})
 			aor := absoluteobjectreference.InitAOR(
 				bdaor["IP"].(string),
-				bdaor["Port"].(int),
-				bdaor["InvokerID"].(int),
+				int(bdaor["Port"].(float64)),
+				int(bdaor["InvokerID"].(float64)),
 				bdaor["Protocol"].(string),
-				bdaor["ObjectID"].(int))
+				int(bdaor["ObjectID"].(float64)))
 			p2 := clientproxy.InitClientProxy(aor, bdConv["TypeName"].(string))
 			replParams = make([]interface{}, 1)
 			replParams[0] = sv.NS.Bind(p1, p2)

@@ -20,6 +20,7 @@ import (
 type ManagerInvoker struct{}
 
 func writeFromPool(pool *pooling.Pool) {
+	defer pooling.EndPool(pool)
 	man := pool.GetFromPool().(*manager.Manager)
 	man.Write("files/")
 }
@@ -45,9 +46,13 @@ func (ManagerInvoker) Invoke() {
 		managerList[i] = &managerAux
 	}
 	manPool := pooling.InitPool(managerList)
-	defer writeFromPool(manPool)
+
+	manF := manPool.GetFromPool().(*manager.Manager)
+
+	defer manF.Write("files/")
 	defer pooling.EndPool(manPool)
-	man := manPool.GetFromPool().(manager.Manager)
+
+	man := manPool.GetFromPool().(*manager.Manager)
 	man.Load("files/database.json")
 
 	fmt.Println("Server invoking.")
@@ -60,7 +65,6 @@ func (ManagerInvoker) Invoke() {
 
 		// 	unmarshall
 		packetPacketRequest := marshallerImpl.Unmarshall(rcvMsgBytes)
-
 		// setup request
 		var manA *manager.Manager
 		manA = manPool.GetFromPool().(*manager.Manager)
@@ -68,20 +72,25 @@ func (ManagerInvoker) Invoke() {
 		// finding the operation
 		operation := packetPacketRequest.Bd.ReqHeader.Operation
 		switch operation {
+		case "Write":
+			_p1 := packetPacketRequest.Bd.ReqBody.Body[0].(string)
+			manA.Write(_p1)
+			replParams[0] = true
 		case "AddPerson":
-			_p1 := packetPacketRequest.Bd.ReqBody.Body[0].(person.Person)
-			manA.AddPerson(_p1)
-			replParams[0] = nil
+			p1map := packetPacketRequest.Bd.ReqBody.Body[0].(map[string]interface{})
+			_p1 := person.InitPerson(p1map["name"].(string), int(p1map["age"].(float64)), p1map["gender"].(string), int(p1map["id"].(float64)))
+			replParams[0] = manA.AddPerson(*_p1)
 		case "RemovePerson":
 			_p1 := int(packetPacketRequest.Bd.ReqBody.Body[0].(float64))
 			replParams[0] = manA.RemovePerson(_p1)
 		case "GetPerson":
 			_p1 := int(packetPacketRequest.Bd.ReqBody.Body[0].(float64))
-			replParams[0] = manA.GetPerson(_p1)
+			replParams[0] = person.PersonToInterface(manA.GetPerson(_p1))
 		case "SetPerson":
 			_p1 := int(packetPacketRequest.Bd.ReqBody.Body[0].(float64))
-			_p2 := packetPacketRequest.Bd.ReqBody.Body[1].(person.Person)
-			replParams[0] = manA.SetPerson(_p1, _p2)
+			p2map := packetPacketRequest.Bd.ReqBody.Body[1].(map[string]interface{})
+			_p2 := person.InitPerson(p2map["name"].(string), int(p2map["age"].(float64)), p2map["gender"].(string), int(p2map["id"].(float64)))
+			replParams[0] = manA.SetPerson(_p1, *_p2)
 		case "GetName":
 			_p1 := int(packetPacketRequest.Bd.ReqBody.Body[0].(float64))
 			replParams[0] = manA.GetName(_p1)

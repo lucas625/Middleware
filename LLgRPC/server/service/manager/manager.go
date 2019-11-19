@@ -152,12 +152,13 @@ func (man *Manager) SetGender(id int, gender string) bool {
 // Write is a function to write all data of the database.
 //
 // Parameters:
-//  none
+//  outpath - path to write the database.
 //
 // Returns:
 //  none
 //
 func (man *Manager) Write(outPath string) {
+	fmt.Println("Writing database")
 	// creating the json
 	file := man.DB.DBToJSON()
 	// getting the right path
@@ -189,13 +190,32 @@ func (man *Manager) Load(inPath string) {
 		// converting to PersonList
 		byteDatabase, err := ioutil.ReadAll(dbFile)
 		utils.PrintError(err, "Unable to convert database file to bytes.")
-		var pList person.PersonList
-		err = json.Unmarshal(byteDatabase, &pList)
+
+		var pListMap map[string]interface{}
+
+		err = json.Unmarshal(byteDatabase, &pListMap)
+
+		pListIF := pListMap["PersonList"].([]interface{})
+		nextID := int(pListMap["NextID"].(float64))
+
+		personlist := make([]person.Person, len(pListIF))
+
+		for i := range pListIF {
+			paux := person.InitPerson(pListIF[i].(map[string]interface{})["name"].(string),
+				int(pListIF[i].(map[string]interface{})["age"].(float64)),
+				pListIF[i].(map[string]interface{})["gender"].(string),
+				int(pListIF[i].(map[string]interface{})["id"].(float64)))
+			personlist[i] = *paux
+		}
+
+		pList := person.PersonList{Persons: personlist, NextID: nextID}
+
 		utils.PrintError(err, "Failed to unmarshal database.")
 		// loading the database
 		man.DB.LoadDatabase(&pList)
 		fmt.Println("Database loaded.")
 	} else {
+		man.DB = database.InitDatabase()
 		fmt.Println("Unable to find database.json.")
 	}
 }

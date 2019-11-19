@@ -74,7 +74,7 @@ func (sv Server) Bind(name string, cp clientproxy.ClientProxy) {
 	param[0] = name
 	param[1] = cp
 	rq := utils.Request{Op: "Bind", Params: param}
-	inv := utils.Invocation{AOR: cp.AOR, Request: rq}
+	inv := utils.Invocation{AOR: absoluteobjectreference.AOR{IP: sv.IP, Port: sv.Port}, Request: rq}
 	reqtor := requestor.Requestor{}
 	// getting the result
 	reply := reqtor.Invoke(inv).([]interface{})

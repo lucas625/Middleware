@@ -170,8 +170,13 @@ func (db *Database) DBToJSON() []byte {
 	db.Lock()
 	defer db.Unlock()
 
-	pl := db.Persons
-	file, err := json.MarshalIndent(*pl, "", "	")
+	persons := make(map[string]interface{})
+	persons["PersonList"] = make([]map[string]interface{}, len(db.Persons.Persons))
+	for i := range db.Persons.Persons {
+		persons["PersonList"].([]map[string]interface{})[i] = person.PersonToInterface(db.Persons.Persons[i])
+	}
+	persons["NextID"] = db.Persons.NextID
+	file, err := json.MarshalIndent(persons, "", "	")
 	utils.PrintError(err, "Unable to convert database to json.")
 	return file
 }
@@ -199,7 +204,7 @@ func (db *Database) LoadDatabase(plist *person.PersonList) {
 //  the database.
 //
 func InitDatabase() *Database {
-	pList := person.PersonList{Persons: make([]person.Person, 100), NextID: 0}
+	pList := person.PersonList{Persons: make([]person.Person, 0, 100), NextID: 0}
 	db := Database{Persons: &pList}
 	return &db
 }

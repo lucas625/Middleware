@@ -13,6 +13,7 @@ func main() {
 	// registering the calculator
 	var cp clientproxy.ClientProxy
 	cp = clientproxy.InitClientProxy(absoluteobjectreference.InitAOR("localhost", 8080, 1, "tcp", 1), "Manager")
+	fmt.Println("Preparing server")
 	nclient := namingproxy.InitServer(cp.AOR.IP)
 	nclient.Bind("Manager", cp)
 	fmt.Println("Manager registered!")

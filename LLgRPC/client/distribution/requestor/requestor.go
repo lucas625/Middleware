@@ -40,7 +40,6 @@ func (Requestor) Invoke(inv utils.Invocation) interface{} {
 
 	// serialise request packet
 	msgToClientBytes := marshallerInst.Marshall(packetPacketRequest)
-
 	// send request packet and receive reply packet
 	msgFromServerBytes := crhInst.SendReceive(msgToClientBytes)
 
