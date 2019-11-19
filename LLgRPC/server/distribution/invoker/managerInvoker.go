@@ -74,8 +74,9 @@ func (ManagerInvoker) Invoke() {
 		switch operation {
 		case "Write":
 			_p1 := packetPacketRequest.Bd.ReqBody.Body[0].(string)
-			manA.Write(_p1)
-			replParams[0] = true
+			replParams[0] = manA.Write(_p1)
+		case "List":
+			replParams[0] = manA.List()
 		case "AddPerson":
 			p1map := packetPacketRequest.Bd.ReqBody.Body[0].(map[string]interface{})
 			_p1 := person.InitPerson(p1map["name"].(string), int(p1map["age"].(float64)), p1map["gender"].(string), int(p1map["id"].(float64)))

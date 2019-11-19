@@ -30,13 +30,14 @@ func runExperiment(numberOfCalls int, wg *sync.WaitGroup, calc *utils.CalcValues
 		p := person.InitPerson("lucas", 10, "M", 1)
 		result := manager.AddPerson(*p)
 		endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
-		fmt.Println(result)                                            // making the request
+		fmt.Println(i+start, result)                                   // making the request
 		utils.AddValue(calc, endTime)                                  // pushing to the stored values
 		time.Sleep(10 * time.Millisecond)                              // setting the sleep time
 	}
 
 	if start >= 40 {
 		manager.Write("files")
+		manager.List()
 	}
 
 }

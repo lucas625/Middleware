@@ -149,29 +149,57 @@ func (man *Manager) SetGender(id int, gender string) bool {
 	return man.DB.SetGender(id, gender)
 }
 
+// List is a function to list all data of the database.
+//
+// Parameters:
+//  none
+//
+// Returns:
+//  the list of persons on the database.
+//
+func (man *Manager) List() map[string]interface{} {
+	var interfaceC map[string]interface{}
+	err := json.Unmarshal(man.DB.DBToJSON(), &interfaceC)
+	if err != nil {
+		fmt.Println("Failed to list", err)
+		return make(map[string]interface{})
+	}
+	return interfaceC
+}
+
 // Write is a function to write all data of the database.
 //
 // Parameters:
 //  outpath - path to write the database.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (man *Manager) Write(outPath string) {
+func (man *Manager) Write(outPath string) bool {
 	fmt.Println("Writing database")
 	// creating the json
 	file := man.DB.DBToJSON()
 	// getting the right path
 	filePath, err := filepath.Abs(path.Join(outPath, "database.json"))
-	utils.PrintError(err, "Unable to get database is absolute path.")
+	if err != nil {
+		fmt.Println("Failed to find path")
+		return false
+	}
 	// creating the folder if it doesn't exists.
 	if !utils.PathExists(filePath) {
 		err = os.MkdirAll(outPath, 0700)
-		utils.PrintError(err, "Unable to create dirs.")
+		if err != nil {
+			fmt.Println("Failed to make dir on writer.")
+			return false
+		}
 	}
 	// writing
 	err = ioutil.WriteFile(filePath, file, 0700)
-	utils.PrintError(err, "Unable to write database.")
+	if err != nil {
+		fmt.Println("Failed to write.")
+		return false
+	}
+	return true
 }
 
 // Load is a function to load all database as json.

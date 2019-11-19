@@ -18,15 +18,47 @@ type ManagerProxy struct {
 	AOR absoluteobjectreference.AOR
 }
 
+// List is a function to list all data of the database.
+//
+// Parameters:
+//  none
+//
+// Returns:
+//  none
+//
+func (proxy ManagerProxy) List() {
+	param := make([]interface{}, 0)
+	rq := utils.Request{Op: "List", Params: param}
+	inv := utils.Invocation{AOR: proxy.AOR, Request: rq}
+	reqtor := requestor.Requestor{}
+	// getting reply
+	reply := reqtor.Invoke(inv).([]interface{})
+	pListMap := reply[0].(map[string]interface{})
+	pListIF := pListMap["PersonList"].([]interface{})
+
+	personlist := make([]person.Person, len(pListIF))
+
+	for i := range pListIF {
+		paux := person.InitPerson(pListIF[i].(map[string]interface{})["name"].(string),
+			int(pListIF[i].(map[string]interface{})["age"].(float64)),
+			pListIF[i].(map[string]interface{})["gender"].(string),
+			int(pListIF[i].(map[string]interface{})["id"].(float64)))
+		personlist[i] = *paux
+	}
+
+	fmt.Println(personlist)
+
+}
+
 // Write is a function to write all data of the database.
 //
 // Parameters:
 //  outpath - path to write the database.
 //
 // Returns:
-//  none
+//  a flag if went ok.
 //
-func (proxy ManagerProxy) Write(path string) {
+func (proxy ManagerProxy) Write(path string) bool {
 	param := make([]interface{}, 1)
 	param[0] = path
 	rq := utils.Request{Op: "Write", Params: param}
@@ -34,7 +66,7 @@ func (proxy ManagerProxy) Write(path string) {
 	reqtor := requestor.Requestor{}
 	// getting reply
 	reply := reqtor.Invoke(inv).([]interface{})
-	fmt.Println(reply)
+	return reply[0].(bool)
 }
 
 // AddPerson is a function for adding a person.
