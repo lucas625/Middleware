@@ -32,11 +32,12 @@ func (crh CRH) SendReceive(msgToServer []byte) []byte {
 	// connect to server
 	var conn net.Conn
 	var err error
-	for {
+	connected := false
+	for !connected {
 		conn, err = net.Dial("tcp", "localhost:"+strconv.Itoa(crh.ServerPort))
 		if err == nil {
 			// connected to server.
-			break
+			connected = true
 		}
 
 	}
@@ -46,7 +47,7 @@ func (crh CRH) SendReceive(msgToServer []byte) []byte {
 	sizeMsgToServer := make([]byte, 4)
 	l := uint32(len(msgToServer))
 	binary.LittleEndian.PutUint32(sizeMsgToServer, l)
-	conn.Write(sizeMsgToServer)
+	_, err = conn.Write(sizeMsgToServer)
 	utils.PrintError(err, "unable to write size to server on client request handler")
 
 	// send message

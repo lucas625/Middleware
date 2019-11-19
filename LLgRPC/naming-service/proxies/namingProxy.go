@@ -1,10 +1,11 @@
 package proxies
 
 import (
-	"github.com/lucas625/Middleware/LLgRPC/common/service/namingService"
+	"github.com/lucas625/Middleware/LLgRPC/common/distribution/absoluteobjectreference"
+	"github.com/lucas625/Middleware/LLgRPC/common/distribution/clientproxy"
 	"github.com/lucas625/Middleware/LLgRPC/common/distribution/marshaller"
 	"github.com/lucas625/Middleware/LLgRPC/common/distribution/packet"
-	"github.com/lucas625/Middleware/LLgRPC/common/distribution/clientproxy"
+	"github.com/lucas625/Middleware/LLgRPC/common/service/namingservice"
 	"github.com/lucas625/Middleware/LLgRPC/server/infrastructure/srh"
 
 	"fmt"
@@ -18,8 +19,8 @@ import (
 //  Port - port to the service.
 //
 type Server struct {
-	NS   *namingService.NamingService
-	IP string
+	NS   *namingservice.NamingService
+	IP   string
 	Port int
 }
 
@@ -57,12 +58,16 @@ func (sv Server) Run() {
 			bd := packetPacketRequest.Bd.ReqBody.Body
 			p1 := bd[0].(string)
 			bdConv := bd[1].(map[string]interface{})
-			p2 := clientproxy.InitClientProxy(bdConv["Host"].(string), int(bdConv["Port"].(float64)), int(bdConv["ID"].(float64)), bdConv["TypeName"].(string))
+			bdaor := bdConv["AOR"].(map[string]interface{})
+			aor := absoluteobjectreference.InitAOR(
+				bdaor["IP"].(string),
+				int(bdaor["Port"].(float64)),
+				int(bdaor["InvokerID"].(float64)),
+				bdaor["Protocol"].(string),
+				int(bdaor["ObjectID"].(float64)))
+			p2 := clientproxy.InitClientProxy(aor, bdConv["TypeName"].(string))
 			replParams = make([]interface{}, 1)
 			replParams[0] = sv.NS.Bind(p1, p2)
-			if replParams[0] != nil {
-				replParams[0] = replParams[0].(error)
-			}
 		case "List":
 			replParams = make([]interface{}, 1)
 			replParams[0] = sv.NS.List()
@@ -93,7 +98,7 @@ func (sv Server) Run() {
 //
 func InitServer() Server {
 	cpMap := make(map[string]clientproxy.ClientProxy)
-	ns := namingService.NamingService{Repository: cpMap}
+	ns := namingservice.NamingService{Repository: cpMap}
 	sv := Server{NS: &ns, IP: "localhost", Port: 8090}
 	return sv
 }

@@ -1,8 +1,6 @@
-package namingService
+package namingservice
 
 import (
-	"errors"
-
 	"github.com/lucas625/Middleware/LLgRPC/common/distribution/clientproxy"
 )
 
@@ -22,15 +20,15 @@ type NamingService struct {
 //  proxy - the ClientProxy to with the name key.
 //
 // Returns:
-//  an error if was unable to add the ClientProxy.
+//  a flag if went ok.
 //
-func (naming *NamingService) Bind(name string, proxy clientproxy.ClientProxy) error {
+func (naming *NamingService) Bind(name string, proxy clientproxy.ClientProxy) bool {
 	_, present := naming.Repository[name]
 	if present {
-		return errors.New("Unable to bind " + name + ". This name is already on the naming service.")
+		return false
 	}
 	naming.Repository[name] = proxy
-	return nil
+	return true
 }
 
 // Lookup is a function to get a ClientProxy from the repository.
@@ -40,15 +38,15 @@ func (naming *NamingService) Bind(name string, proxy clientproxy.ClientProxy) er
 //
 // Returns:
 //  the ClientProxy.
-//  an error if was unable to find the name.
+//  a flag if went ok.
 //
-func (naming *NamingService) Lookup(name string) (clientproxy.ClientProxy, error) {
+func (naming *NamingService) Lookup(name string) (clientproxy.ClientProxy, bool) {
 	cp, present := naming.Repository[name]
 	if !present {
 		var nilClientProxy clientproxy.ClientProxy // cannot return nil for struct
-		return nilClientProxy, errors.New(name + " not found on the naming service.")
+		return nilClientProxy, false
 	}
-	return cp, nil
+	return cp, true
 }
 
 // List is a function to return all data in the naming service.

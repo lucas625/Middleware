@@ -1,38 +1,18 @@
 package utils
 
+import (
+	"github.com/lucas625/Middleware/LLgRPC/common/distribution/absoluteobjectreference"
+)
+
 // Invocation is a struct for invocation calls.
 //
 // Members:
-//  Host    - the host target of the call.
-//  Port    - the port of the call.
+//  AOR     - the absolute object reference.
 //  Request - the request.
 //
 type Invocation struct {
-	Host    string
-	Port    int
+	AOR     absoluteobjectreference.AOR
 	Request Request
-}
-
-// Termination is a struct for terminate.
-//
-// Members:
-//  Rep - the reply.
-//
-type Termination struct {
-	Rep Reply
-}
-
-// IOR is a struct for holding a ID, a Port and the host.
-//
-// Members:
-//  Host - the host.
-//  Port - the port.
-//  ID   - the id of the application.
-//
-type IOR struct {
-	Host string
-	Port int
-	ID   int
 }
 
 // Request is a struct for the request data.
