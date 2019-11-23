@@ -35,7 +35,7 @@ func main() {
 
 	// create new rpc server
 	server := rpc.NewServer()
-	server.RegisterName("Database", manager1)
+	server.RegisterName("Manager", manager1)
 
 	// associate a http handler to servidor
 	server.HandleHTTP("/", "/debug")
@@ -66,8 +66,10 @@ type manager struct {
 // Returns:
 //  a flag if went ok.
 //
-func (man *manager) Addperson(p person) bool {
-	return man.DB.Addperson(p)
+func (man *manager) Addperson(p person, reply *bool) error {
+	fmt.Println("Servidor pronto (RPC-HTTP) ...\n")
+	*reply = man.DB.Addperson(p)
+	return nil
 }
 
 // Removeperson is a function for removing a 
