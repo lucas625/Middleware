@@ -4,14 +4,58 @@ import (
 	"fmt"
 	"net/rpc"
 	"strconv"
+	"sync"
 	"time"
 
-	//"sync"
-
-	"github.com/lucas625/Middleware/LLgRPC/common/service/person"
-	"github.com/lucas625/Middleware/utils"
-	//"github.com/lucas625/Middleware/LLgRPC/common/utils"
+	"github.com/lucas625/Middleware/LLgRPC/common/utils"
+	"github.com/lucas625/Middleware/database-rpc/common/service/person"
 )
+
+func runExperiment(numberOfCalls int, wg *sync.WaitGroup, calc *utils.CalcValues, start int) {
+	defer wg.Done()
+	// connect to servidor
+	client, err := rpc.DialHTTP("tcp", ":"+strconv.Itoa(8080))
+	utils.PrintError(err, "O Servidor não está pronto")
+
+	// make requests
+	for i := 0; i < numberOfCalls; i++ {
+		current := i + start
+
+		switch current % 3 {
+		case 0:
+			var reply bool
+			// prepara request
+			args := person.InitPerson("lucas", 22, "M", 1)
+
+			initialTime := time.Now()
+			// envia request e recebe resposta
+			client.Call("Manager.AddPerson", args, &reply)
+
+			endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
+			utils.AddValue(calc, endTime)
+
+			fmt.Printf("Added = %v\n", *&reply)
+		case 1:
+			var reply bool
+			// prepara request
+			args := "outF/"
+			initialTime := time.Now()
+			// faz a call
+			client.Call("Manager.Write", args, &reply)
+			endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
+			utils.AddValue(calc, endTime)
+		case 2:
+			var rep string
+			initialTime := time.Now()
+			client.Call("Manager.GetName", 1, &rep)
+			endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
+			utils.AddValue(calc, endTime)
+			fmt.Println(rep)
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	time.Sleep(100 * time.Millisecond)
+}
 
 // doSomething is a function to do some random stuff while the client is making requests.
 //
@@ -28,79 +72,19 @@ func doSomething() {
 	}
 }
 
-/*
-func runExperiment(numberOfCalls int, wg *sync.WaitGroup, calc *utils.CalcValues, start int) {
-	defer wg.Done()
-	// getting the clientproxy
-	//namingServer := namingproxy.InitServer("localhost")
-	//manager := namingServer.Lookup("Manager").(proxies.ManagerProxy)
-	// executing
-	for i := 0; i < numberOfCalls; i++ {
-		initialTime := time.Now() //calculating time
-		p := person.InitPerson("lucas", 10, "M", 1)
-		client.Call("manager.AddPerson", *p) //, &reply
-		//result := manager.AddPerson(*p)
-		endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
-		fmt.Println(i+start, result)                                   // making the request
-		utils.AddValue(calc, endTime)                                  // pushing to the stored values
-		time.Sleep(10 * time.Millisecond)                              // setting the sleep time
-	}
-
-	if start >= 40 {
-		manager.Write("files")
-		manager.List()
-	}
-
-}
-*/
 func main() {
-	//numberOfCalls := 10000 // the number of server calls
-	fmt.Println("1")
-	numberOfCalls := 50
-	perCall := 10
+	numberOfCalls := 10000
+	perCall := 500
 	aux := numberOfCalls / perCall
 
 	calc := utils.InitCalcValues(make([]float64, numberOfCalls, numberOfCalls)) // object to store the rtts
-
-	var reply int
-	// connect to servidor
-	fmt.Println("1")
-	client, err := rpc.DialHTTP("tcp", ":"+strconv.Itoa(8080))
-	fmt.Println("1")
-	utils.PrintError(err, "O Servidor não está pronto")
-	//var wg sync.WaitGroup
+	var wg sync.WaitGroup
 	go doSomething()
-	// make requests
-	/*
-		for i := 0; i < numberOfCalls; i++ {
-			// prepara request
-			args := i
-
-			initialTime := time.Now()
-			// envia request e recebe resposta
-			client.Call("Multiplicador.Mul", args, &reply)
-
-			endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
-			utils.AddValue(&calc, endTime)
-
-			fmt.Printf("%v\n", *&reply)
-
-			time.Sleep(10 * time.Millisecond)
-		}
-	*/
 
 	for i := 0; i < aux; i++ {
-		initialTime := time.Now()
-		p := person.InitPerson("lucas", 10, "M", 1)
-		client.Call("manager.AddPerson", p, &reply)                    //
-		endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
-		utils.AddValue(&calc, endTime)
-		//fmt.Printf("%v\n", *&reply)
-		fmt.Println(i, *&reply)
-		//wg.Add(1)
-		//go runExperiment(perCall, &wg, &calc, (i * perCall))
-		//wg.Wait()
-		time.Sleep(10 * time.Millisecond)
+		wg.Add(1)
+		go runExperiment(perCall, &wg, &calc, (i * perCall))
+		wg.Wait()
 	}
 
 	// evaluating

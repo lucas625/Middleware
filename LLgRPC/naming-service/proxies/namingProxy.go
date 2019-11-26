@@ -5,7 +5,7 @@ import (
 	"github.com/lucas625/Middleware/LLgRPC/common/distribution/clientproxy"
 	"github.com/lucas625/Middleware/LLgRPC/common/distribution/marshaller"
 	"github.com/lucas625/Middleware/LLgRPC/common/distribution/packet"
-	"github.com/lucas625/Middleware/LLgRPC/common/service/namingservice"
+	namingservice "github.com/lucas625/Middleware/LLgRPC/common/service/namingService"
 	"github.com/lucas625/Middleware/LLgRPC/server/infrastructure/srh"
 
 	"fmt"
