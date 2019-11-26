@@ -33,8 +33,8 @@ func runExperiment(numberOfCalls int, wg *sync.WaitGroup, calc *utils.CalcValues
 
 			endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
 			utils.AddValue(calc, endTime)
-
-			fmt.Printf("Added = %v\n", *&reply)
+			fmt.Print(current)
+			fmt.Printf(" Added = %v\n", *&reply)
 		case 1:
 			var reply bool
 			// prepara request
@@ -50,7 +50,7 @@ func runExperiment(numberOfCalls int, wg *sync.WaitGroup, calc *utils.CalcValues
 			client.Call("Manager.GetName", 1, &rep)
 			endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
 			utils.AddValue(calc, endTime)
-			fmt.Println(rep)
+			fmt.Println(current, rep)
 		}
 		time.Sleep(10 * time.Millisecond)
 	}
