@@ -14,7 +14,7 @@ import (
 func runExperiment(numberOfCalls int, wg *sync.WaitGroup, calc *utils.CalcValues, start int) {
 	defer wg.Done()
 	// connect to servidor
-	client, err := rpc.DialHTTP("tcp", ":"+strconv.Itoa(8080))
+	client, err := rpc.Dial("tcp", ":"+strconv.Itoa(8080))
 	utils.PrintError(err, "O Servidor não está pronto")
 
 	// make requests
