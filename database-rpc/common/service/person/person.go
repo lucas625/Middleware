@@ -4,7 +4,7 @@ package person
 //
 // Members:
 //  Persons - a list of persons.
-//  NextID  - id generator.
+//  NextID  - ID generator.
 //
 type PersonList struct {
 	Persons []Person
@@ -20,11 +20,11 @@ type PersonList struct {
 //  a flag if went ok.
 //
 func (plist *PersonList) AddPerson(p Person) bool {
-	id := plist.NextID
-	if id >= cap(plist.Persons) {
+	ID := plist.NextID
+	if ID >= cap(plist.Persons) {
 		plist.Persons = plist.Persons[:cap(plist.Persons)]
 	}
-	p.SetID(id)
+	p.SetID(ID)
 	plist.NextID++
 	plist.Persons = append(plist.Persons, p)
 	return true
@@ -33,51 +33,51 @@ func (plist *PersonList) AddPerson(p Person) bool {
 // RemovePerson is a function for adding a person.
 //
 // Parameters:
-//  id - the id of the person.
+//  ID - the ID of the person.
 //
 // Returns:
 //  a flag if went ok.
 //
-func (plist *PersonList) RemovePerson(id int) bool {
-	idx := plist.GetPerson(id)
-	if idx == -1 {
+func (plist *PersonList) RemovePerson(ID int) bool {
+	IDx := plist.GetPerson(ID)
+	if IDx == -1 {
 		return false
 	}
-	plist.Persons[idx] = plist.Persons[len(plist.Persons)]
+	plist.Persons[IDx] = plist.Persons[len(plist.Persons)]
 	plist.Persons = plist.Persons[:len(plist.Persons)-1]
 	return true
 }
 
-// GetPerson is a function for getting a person idx by id.
+// GetPerson is a function for getting a person IDx by ID.
 //
 // Parameters:
-//  id - the id of the person.
+//  ID - the ID of the person.
 //
 // Returns:
-//  idx - the idx of the person.
+//  IDx - the IDx of the person.
 //
-func (plist *PersonList) GetPerson(id int) int {
-	idx := -1
+func (plist *PersonList) GetPerson(ID int) int {
+	IDx := -1
 	for i := range plist.Persons {
-		if plist.Persons[i].GetID() == id {
-			idx = i
+		if plist.Persons[i].GetID() == ID {
+			IDx = i
 		}
 	}
-	return idx
+	return IDx
 }
 
 // Person is a structure for saving a person's data.
 //
 // Members:
-//  name   - the name of the person.
-//  age    - the age of the person.
-//  gender - the gender of the person.
+//  Name   - the Name of the person.
+//  Age    - the Age of the person.
+//  Gender - the Gender of the person.
 //
 type Person struct {
-	name   string
-	age    int
-	gender string
-	id     int
+	Name   string
+	Age    int
+	Gender string
+	ID     int
 }
 
 // PersonToInterface is a function for converting a person to interface.
@@ -86,125 +86,125 @@ type Person struct {
 //  p - the person.
 //
 // Returns:
-//  name - the name of the person.
+//  Name - the Name of the person.
 //
 func PersonToInterface(p Person) map[string]interface{} {
 	per := make(map[string]interface{})
-	per["name"] = p.GetName()
-	per["age"] = p.GetAge()
-	per["gender"] = p.GetGender()
-	per["id"] = p.GetID()
+	per["Name"] = p.GetName()
+	per["Age"] = p.GetAge()
+	per["Gender"] = p.GetGender()
+	per["ID"] = p.GetID()
 	return per
 }
 
-// GetName is a function for getting a person name.
+// GetName is a function for getting a person Name.
 //
 // Parameters:
 //  none
 //
 // Returns:
-//  name - the name of the person.
+//  Name - the Name of the person.
 //
 func (p *Person) GetName() string {
-	return p.name
+	return p.Name
 }
 
-// GetAge is a function for getting a person age.
+// GetAge is a function for getting a person Age.
 //
 // Parameters:
 //  none
 //
 // Returns:
-//  age - the age of the person.
+//  Age - the Age of the person.
 //
 func (p *Person) GetAge() int {
-	return p.age
+	return p.Age
 }
 
-// GetGender is a function for getting a person gender.
+// GetGender is a function for getting a person Gender.
 //
 // Parameters:
 //  none
 //
 // Returns:
-//  gender - the gender of the person.
+//  Gender - the Gender of the person.
 //
 func (p *Person) GetGender() string {
-	return p.gender
+	return p.Gender
 }
 
-// GetID is a function for getting a person id.
+// GetID is a function for getting a person ID.
 //
 // Parameters:
 //  none
 //
 // Returns:
-//  id - the id of the person.
+//  ID - the ID of the person.
 //
 func (p *Person) GetID() int {
-	return p.id
+	return p.ID
 }
 
-// SetName is a function for setting a person name.
+// SetName is a function for setting a person Name.
 //
 // Parameters:
-//  name - the new name.
+//  Name - the new Name.
 //
 // Returns:
 //  none
 //
-func (p *Person) SetName(name string) {
-	p.name = name
+func (p *Person) SetName(Name string) {
+	p.Name = Name
 }
 
-// SetAge is a function for setting a person age.
+// SetAge is a function for setting a person Age.
 //
 // Parameters:
-//  age - the age of the person.
+//  Age - the Age of the person.
 //
 // Returns:
 //  none
 //
-func (p *Person) SetAge(age int) {
-	p.age = age
+func (p *Person) SetAge(Age int) {
+	p.Age = Age
 }
 
-// SetGender is a function for setting a person gender.
+// SetGender is a function for setting a person Gender.
 //
 // Parameters:
-//  gender - the gender of the person.
+//  Gender - the Gender of the person.
 //
 // Returns:
 //  none
 //
-func (p *Person) SetGender(gender string) {
-	p.gender = gender
+func (p *Person) SetGender(Gender string) {
+	p.Gender = Gender
 }
 
-// SetID is a function for setting a person id.
+// SetID is a function for setting a person ID.
 //
 // Parameters:
-//  id - the id of the person.
+//  ID - the ID of the person.
 //
 // Returns:
 //  none
 //
-func (p *Person) SetID(id int) {
-	p.id = id
+func (p *Person) SetID(ID int) {
+	p.ID = ID
 }
 
 // InitPerson is a function for initializing a person.
 //
 // Parameters:
-//  name   - the name of the person.
-//  age    - the age of the person.
-//  gender - the gender of the person.
-//  id     - the id of the person.
+//  Name   - the Name of the person.
+//  Age    - the Age of the person.
+//  Gender - the Gender of the person.
+//  ID     - the ID of the person.
 //
 // Returns:
 //  a person
 //
-func InitPerson(name string, age int, gender string, id int) *Person {
-	p := Person{name: name, age: age, gender: gender, id: id}
+func InitPerson(Name string, Age int, Gender string, ID int) *Person {
+	p := Person{Name: Name, Age: Age, Gender: Gender, ID: ID}
 	return &p
 }
