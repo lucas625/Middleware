@@ -5,10 +5,11 @@ import (
 	"net/rpc"
 	"strconv"
 	"time"
+
 	//"sync"
 
-	"github.com/lucas625/Middleware/utils"
 	"github.com/lucas625/Middleware/LLgRPC/common/service/person"
+	"github.com/lucas625/Middleware/utils"
 	//"github.com/lucas625/Middleware/LLgRPC/common/utils"
 )
 
@@ -26,6 +27,7 @@ func doSomething() {
 		j--
 	}
 }
+
 /*
 func runExperiment(numberOfCalls int, wg *sync.WaitGroup, calc *utils.CalcValues, start int) {
 	defer wg.Done()
@@ -70,27 +72,27 @@ func main() {
 	go doSomething()
 	// make requests
 	/*
-	for i := 0; i < numberOfCalls; i++ {
-		// prepara request
-		args := i
+		for i := 0; i < numberOfCalls; i++ {
+			// prepara request
+			args := i
 
-		initialTime := time.Now()
-		// envia request e recebe resposta
-		client.Call("Multiplicador.Mul", args, &reply)
+			initialTime := time.Now()
+			// envia request e recebe resposta
+			client.Call("Multiplicador.Mul", args, &reply)
 
-		endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
-		utils.AddValue(&calc, endTime)
+			endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
+			utils.AddValue(&calc, endTime)
 
-		fmt.Printf("%v\n", *&reply)
+			fmt.Printf("%v\n", *&reply)
 
-		time.Sleep(10 * time.Millisecond)
-	}
+			time.Sleep(10 * time.Millisecond)
+		}
 	*/
 
 	for i := 0; i < aux; i++ {
 		initialTime := time.Now()
 		p := person.InitPerson("lucas", 10, "M", 1)
-		client.Call("manager.AddPerson", p, &reply) //
+		client.Call("manager.AddPerson", p, &reply)                    //
 		endTime := float64(time.Now().Sub(initialTime).Milliseconds()) // RTT
 		utils.AddValue(&calc, endTime)
 		//fmt.Printf("%v\n", *&reply)
