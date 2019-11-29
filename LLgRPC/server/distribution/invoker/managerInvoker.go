@@ -47,9 +47,6 @@ func (ManagerInvoker) Invoke() {
 	}
 	manPool := pooling.InitPool(managerList)
 
-	manF := manPool.GetFromPool().(*manager.Manager)
-
-	defer manF.Write("files/")
 	defer pooling.EndPool(manPool)
 
 	man := manPool.GetFromPool().(*manager.Manager)
@@ -128,4 +125,7 @@ func (ManagerInvoker) Invoke() {
 		// send Reply
 		(&srhImpl).Send(msgToClientBytes)
 	}
+	manF := manPool.GetFromPool().(*manager.Manager)
+
+	manF.Write("files/")
 }
