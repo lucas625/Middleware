@@ -51,7 +51,6 @@ func runExperiment(numberOfCalls int, wg *sync.WaitGroup, calc *utils.CalcValues
 
 		time.Sleep(10 * time.Millisecond) // setting the sleep time
 	}
-	time.Sleep(100 * time.Millisecond)
 }
 
 // doSomething is a function to do some random stuff while the client is making requests.
@@ -71,18 +70,14 @@ func doSomething() {
 
 func main() {
 	numberOfCalls := 10000
-	perCall := 500
-	aux := numberOfCalls / perCall
 	// creating the calcvalues object
 	calc := utils.InitCalcValues(make([]float64, numberOfCalls, numberOfCalls))
 	var wg sync.WaitGroup
 	go doSomething()
 
-	for i := 0; i < aux; i++ {
-		wg.Add(1)
-		go runExperiment(perCall, &wg, &calc, (i * perCall))
-		wg.Wait()
-	}
+	wg.Add(1)
+	go runExperiment(numberOfCalls, &wg, &calc, 0)
+	wg.Wait()
 
 	// evaluating
 	avrg := utils.CalcAverage(&calc)
