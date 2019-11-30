@@ -1,13 +1,13 @@
 # LLgRPC
 
-Go implementation of a procedural middleware similar to gRPC.
+Go implementation of a procedural middleware similar to RPC.
 
 ## Table of Contents
-- [LLgRPC](#LLgRPC)
-  - [Table of Contents](#Table-of-Contents)
-  - [Requirements](#Requirements)
-  - [Installing](#Installing)
-  - [Testing](#Testing)
+- [LLgRPC](#llgrpc)
+  - [Table of Contents](#table-of-contents)
+  - [Requirements](#requirements)
+  - [Installing](#installing)
+  - [Testing](#testing)
 
 ## Requirements
 
@@ -25,6 +25,12 @@ https://github.com/lucas625/Middleware.git
 ```
 
 ## Testing
+
+- Run the naming server:
+
+```sh
+go run LLgRPC/client-server/naming-server/naming-server.go
+```
 
 - Run the server:
 
