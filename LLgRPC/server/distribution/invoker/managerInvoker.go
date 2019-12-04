@@ -77,6 +77,7 @@ func (ManagerInvoker) Invoke() {
 		case "AddPerson":
 			p1map := packetPacketRequest.Bd.ReqBody.Body[0].(map[string]interface{})
 			_p1 := person.InitPerson(p1map["name"].(string), int(p1map["age"].(float64)), p1map["gender"].(string), int(p1map["id"].(float64)))
+			fmt.Println(_p1)
 			replParams[0] = manA.AddPerson(*_p1)
 		case "RemovePerson":
 			_p1 := int(packetPacketRequest.Bd.ReqBody.Body[0].(float64))
